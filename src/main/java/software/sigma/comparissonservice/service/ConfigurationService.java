@@ -3,13 +3,12 @@ package software.sigma.comparissonservice.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import software.sigma.comparissonservice.dao.ConfigurationDao;
-import software.sigma.comparissonservice.exceptions.ConfigurationNotFoundException;
 import software.sigma.comparissonservice.model.Configuration;
 
-@Component
+@Service
 public class ConfigurationService {
 
 	@Autowired
@@ -24,13 +23,9 @@ public class ConfigurationService {
 		return dao.getAll();
 	}
 
-	public Configuration getConfig(int id) throws ConfigurationNotFoundException {
-		try {
+	public Configuration getConfig(int id) {
 
-			return dao.getById(id);
-		} catch (Exception e) {
-			throw new ConfigurationNotFoundException();
-		}
+		return dao.getById(id);
 
 	}
 

@@ -2,9 +2,7 @@ package software.sigma.comparissonservice.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,40 +13,59 @@ import software.sigma.comparissonservice.model.Configuration;
 
 @Component
 public class ConfigurationDao implements GenericDao<Configuration> {
+	/**
+	 * Name of column with config_schema in table.
+	 */
+	private static final String COL_CONFIG_SCHEMA = "config_schema";
+	/**
+	 * Name of column with configuration name in table.
+	 */
+	private static final String COL_NAME = "name";
+	/**
+	 * Name of column with config_schema in table.
+	 */
+	private static final String COL_ID = "id";
+
+	/**
+	 * SQL query for retrieving all configurations from db.
+	 */
 	private static final String SQL_ALL_CONFIGS = "SELECT * FROM configuration";
-	private static final String SQL_FIND_CONFIG = "SELECT * FROM comparisson_service.configuration_schema JOIN configuration ON configuration_schema.id=configuration.id WHERE configuration.id=?;";
+	/**
+	 * SQL query for retrieving configuration by id from db.
+	 */
+	private static final String SQL_FIND_CONFIG = "SELECT * FROM configuration_schema JOIN configuration ON configuration_schema.id=configuration.id_schema WHERE configuration.id=?;";
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	@Override
 	public List<Configuration> getAll() {
-		List<Configuration> configurations = new ArrayList<>();
+		List<Configuration> configurations = jdbcTemplate.query(SQL_ALL_CONFIGS, new RowMapper<Configuration>() {
 
-		List<Map<String, Object>> queryForList = jdbcTemplate.queryForList(SQL_ALL_CONFIGS);
-		for (Map<String, Object> row : queryForList) {
-			Configuration configuration = new Configuration();
-			configuration.setId(Integer.parseInt(String.valueOf(row.get("id"))));
-			configuration.setName((String) row.get("name"));
-			configuration.setConfiguration((byte[]) row.get("configuration_schema"));
-
-			configurations.add(configuration);
-		}
+			@Override
+			public Configuration mapRow(final ResultSet rs, final int rowNum) throws SQLException {
+				Configuration configuration = new Configuration();
+				configuration.setId(rs.getInt(COL_ID));
+				configuration.setName(rs.getString(COL_NAME));
+				return configuration;
+			}
+		});
 
 		return configurations;
 	}
 
 	@Override
-	public Configuration getById(int id) {
+	public Configuration getById(final int id) {
 
 		Configuration configuration = jdbcTemplate.queryForObject(SQL_FIND_CONFIG, new Object[] { id },
 				new RowMapper<Configuration>() {
 
 					@Override
-					public Configuration mapRow(ResultSet rs, int rowNum) throws SQLException {
+					public Configuration mapRow(final ResultSet rs, final int rowNum) throws SQLException {
 						Configuration configuration = new Configuration();
-						configuration.setId(rs.getInt("id"));
-						configuration.setName(rs.getString("name"));
-						configuration.setConfiguration(rs.getBytes("configuration_schema"));
+						configuration.setId(rs.getInt(COL_ID));
+						configuration.setName(rs.getString(COL_NAME));
+						configuration.setConfiguration(rs.getBytes(COL_CONFIG_SCHEMA));
 						return configuration;
 					}
 
