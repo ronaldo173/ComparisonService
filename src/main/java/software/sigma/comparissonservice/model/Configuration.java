@@ -5,12 +5,27 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Entity for configuration.
+ * 
+ * @author alexandr.efimov
+ *
+ */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Configuration {
 
+	/**
+	 * Is id of configuration.
+	 */
 	private int id;
+	/**
+	 * Name of configuration.
+	 */
 	private String name;
+	/**
+	 * Configuration represented as byte array.
+	 */
 	@XmlElement(name = "config")
 	private byte[] config;
 

@@ -6,24 +6,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import software.sigma.comparissonservice.dao.ConfigurationDao;
+import software.sigma.comparissonservice.dao.GenericDao;
 import software.sigma.comparissonservice.model.Configuration;
 
+/**
+ * Implementation of {@link GenericSerice} for work with {@link Configuration}
+ * 
+ * @author alexandr.efimov
+ *
+ */
 @Service
-public class ConfigurationService {
+public class ConfigurationService implements GenericSerice<Configuration> {
 
 	@Autowired
-	private ConfigurationDao dao;
+	private GenericDao<Configuration> dao;
 
-	public void setDao(ConfigurationDao dao) {
+	public final void setDao(ConfigurationDao dao) {
 		this.dao = dao;
 	}
 
-	public List<Configuration> getAllConfigs() {
+	@Override
+	public List<Configuration> getAll() {
 
 		return dao.getAll();
 	}
 
-	public Configuration getConfig(int id) {
+	@Override
+	public Configuration getById(final int id) {
 
 		return dao.getById(id);
 

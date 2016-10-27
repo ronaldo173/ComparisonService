@@ -11,6 +11,12 @@ import org.springframework.stereotype.Component;
 
 import software.sigma.comparissonservice.model.Configuration;
 
+/**
+ * Implementation of {@link GenericDao} for {@link Configuration} entities.
+ * 
+ * @author alexandr.efimov
+ *
+ */
 @Component
 public class ConfigurationDao implements GenericDao<Configuration> {
 	/**
@@ -56,7 +62,6 @@ public class ConfigurationDao implements GenericDao<Configuration> {
 
 	@Override
 	public Configuration getById(final int id) {
-
 		Configuration configuration = jdbcTemplate.queryForObject(SQL_FIND_CONFIG, new Object[] { id },
 				new RowMapper<Configuration>() {
 
