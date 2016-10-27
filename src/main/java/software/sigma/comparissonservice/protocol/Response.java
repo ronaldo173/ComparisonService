@@ -1,4 +1,4 @@
-package software.sigma.comparissonservice.model;
+package software.sigma.comparissonservice.protocol;
 
 import java.util.Arrays;
 import java.util.List;

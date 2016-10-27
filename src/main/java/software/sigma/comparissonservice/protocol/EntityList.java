@@ -1,4 +1,4 @@
-package software.sigma.comparissonservice.model;
+package software.sigma.comparissonservice.protocol;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  *            is type of entity.
  */
 @XmlRootElement(name = "configurations")
-@XmlSeeAlso({ Configuration.class })
+@XmlSeeAlso({ ConfigurationProtocol.class })
 public class EntityList<T> {
 	private List<T> list;
 

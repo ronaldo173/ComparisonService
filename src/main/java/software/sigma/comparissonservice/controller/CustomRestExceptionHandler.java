@@ -10,7 +10,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import software.sigma.comparissonservice.constants.ErrorConstants;
-import software.sigma.comparissonservice.model.Response;
+import software.sigma.comparissonservice.protocol.Response;
 
 @ControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -19,8 +19,8 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	@ResponseBody
-	public Response handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException exception,
-			WebRequest request) {
+	public Response handleMethodArgumentTypeMismatch(final MethodArgumentTypeMismatchException exception,
+			final WebRequest request) {
 		String error = exception.getName() + ErrorConstants.ERR_SHOULD_BE_TYPE.getValue()
 				+ exception.getRequiredType().getName();
 
@@ -30,7 +30,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(EmptyResultDataAccessException.class)
 	@ResponseBody
-	public Response handleEmptyDataException(EmptyResultDataAccessException exception) {
+	public final Response handleEmptyDataException(final EmptyResultDataAccessException exception) {
 
 		LOGGER.error(exception.getMessage(), exception.getCause());
 		return new Response(false, ErrorConstants.ERR_NO_DATA_FOUND.getValue());

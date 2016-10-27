@@ -8,8 +8,10 @@
 	<name>ComparisonService</name>
 	<url>http://maven.apache.org</url>
 
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
 	<parent>
@@ -23,7 +25,13 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<outputEncoding>UTF-8</outputEncoding>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
 

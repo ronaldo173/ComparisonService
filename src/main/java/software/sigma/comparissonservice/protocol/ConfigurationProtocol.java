@@ -1,12 +1,21 @@
-package software.sigma.comparissonservice.model;
+package software.sigma.comparissonservice.protocol;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import software.sigma.comparissonservice.model.Configuration;
 
 /**
- * Entity for configuration.
+ * Entity for representation {@link Configuration} in output format.
  * 
  * @author alexandr.efimov
  *
  */
-public class Configuration {
+@XmlRootElement(name = "configuration")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class ConfigurationProtocol {
 
 	/**
 	 * Is id of configuration.
@@ -19,6 +28,7 @@ public class Configuration {
 	/**
 	 * Configuration represented as byte array.
 	 */
+	@XmlElement(name = "configContent")
 	private String configContent;
 
 	public int getId() {
@@ -47,7 +57,7 @@ public class Configuration {
 
 	@Override
 	public String toString() {
-		return "Configuration [id=" + id + ", name=" + name + ", configContent=" + configContent + "]";
+		return "ConfigurationProtocol [id=" + id + ", name=" + name + ", configContent=" + configContent + "]";
 	}
 
 }

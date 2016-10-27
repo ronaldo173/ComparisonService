@@ -5,7 +5,7 @@ use comparisson_service;
 
 CREATE TABLE  `configuration_schema` (
   `id` int NOT NULL AUTO_INCREMENT,  
-  `config_schema` BLOB NOT NULL,
+  `config_schema` TEXT NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 

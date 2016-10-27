@@ -1,100 +1,59 @@
 package software.sigma.comparissonservice.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
 
 import software.sigma.comparissonservice.model.Configuration;
 
 /**
- * Implementation of {@link GenericDao} for {@link Configuration} entities.
+ * 
+ * Interface for a Data Access Object that can be used for a
+ * {@link Configuration} objects.
  * 
  * @author alexandr.efimov
  *
  */
-@Component
-public class ConfigurationDao implements GenericDao<Configuration> {
+public interface ConfigurationDao {
 	/**
-	 * Name of column with config_schema in table.
+	 * Save configuration in storage.
+	 * 
+	 * @param configuration
+	 *            is object for saving
+	 * @return true if operation finished successful, false if not
 	 */
-	private static final String COL_CONFIG_SCHEMA = "config_schema";
-	/**
-	 * Name of column with configuration name in table.
-	 */
-	private static final String COL_NAME = "name";
-	/**
-	 * Name of column with config_schema in table.
-	 */
-	private static final String COL_ID = "id";
+	boolean save(Configuration configuration);
 
 	/**
-	 * SQL query for retrieving all configurations from db.
+	 * Get configuration by it's id.
+	 * 
+	 * @param id
+	 *            is id of object
+	 * @return object of type {@link T}
 	 */
-	private static final String SQL_ALL_CONFIGS = "SELECT * FROM configuration";
+	Configuration getById(int id);
+
 	/**
-	 * SQL query for retrieving configuration by id from db.
+	 * Get all configurations.
+	 * 
+	 * @return {@link List} with configurations
 	 */
-	private static final String SQL_FIND_CONFIG = "SELECT * FROM configuration_schema JOIN configuration ON configuration_schema.id=configuration.id_schema WHERE configuration.id=?;";
+	List<Configuration> getAll();
 
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	/**
+	 * Update configuration.
+	 * 
+	 * @param configuration
+	 *            is updated object
+	 * @return true if successful
+	 */
+	boolean update(Configuration configuration);
 
-	@Override
-	public List<Configuration> getAll() {
-		List<Configuration> configurations = jdbcTemplate.query(SQL_ALL_CONFIGS, new RowMapper<Configuration>() {
-
-			@Override
-			public Configuration mapRow(final ResultSet rs, final int rowNum) throws SQLException {
-				Configuration configuration = new Configuration();
-				configuration.setId(rs.getInt(COL_ID));
-				configuration.setName(rs.getString(COL_NAME));
-				return configuration;
-			}
-		});
-
-		return configurations;
-	}
-
-	@Override
-	public Configuration getById(final int id) {
-		Configuration configuration = jdbcTemplate.queryForObject(SQL_FIND_CONFIG, new Object[] { id },
-				new RowMapper<Configuration>() {
-
-					@Override
-					public Configuration mapRow(final ResultSet rs, final int rowNum) throws SQLException {
-						Configuration configuration = new Configuration();
-						configuration.setId(rs.getInt(COL_ID));
-						configuration.setName(rs.getString(COL_NAME));
-						configuration.setConfiguration(rs.getBytes(COL_CONFIG_SCHEMA));
-						return configuration;
-					}
-
-				});
-
-		return configuration;
-	}
-
-	@Override
-	public boolean update(Configuration t) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean save(Configuration t) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean delete(int id) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	/**
+	 * Delete configuration by id.
+	 * 
+	 * @param id
+	 *            is id of configuration
+	 * @return true if successful
+	 */
+	boolean delete(int id);
 
 }
