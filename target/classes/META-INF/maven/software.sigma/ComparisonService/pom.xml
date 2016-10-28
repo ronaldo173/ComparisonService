@@ -8,8 +8,10 @@
 	<name>ComparisonService</name>
 	<url>http://maven.apache.org</url>
 
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
 	<parent>
@@ -23,7 +25,13 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<outputEncoding>UTF-8</outputEncoding>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
 
@@ -61,6 +69,13 @@
 			<artifactId>spring-boot-starter-log4j</artifactId>
 			<version>1.2.5.RELEASE</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>4.3.3.RELEASE</version>
+		</dependency>
+
 
 	</dependencies>
 </project>

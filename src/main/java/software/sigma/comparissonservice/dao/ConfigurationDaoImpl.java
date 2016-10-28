@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -46,16 +47,9 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
 	@Override
 	public List<Configuration> getAll() {
-		List<Configuration> configurations = jdbcTemplate.query(SQL_ALL_CONFIGS, new RowMapper<Configuration>() {
 
-			@Override
-			public Configuration mapRow(final ResultSet rs, final int rowNum) throws SQLException {
-				Configuration configuration = new Configuration();
-				configuration.setId(rs.getInt(COL_ID));
-				configuration.setName(rs.getString(COL_NAME));
-				return configuration;
-			}
-		});
+		List<Configuration> configurations = jdbcTemplate.query(SQL_ALL_CONFIGS,
+				new BeanPropertyRowMapper<Configuration>(Configuration.class));
 
 		return configurations;
 	}

@@ -1,3 +1,9 @@
 *.class
+target/
+/*.settings
+.classpath
+.project
+.checkstyle
 target/classes/META-INF/maven/software.sigma/ComparisonService/pom.properties
-target/classes/META-INF/maven/software.sigma/ComparisonService/pom.properties
+target/classes/META-INF/maven/software.sigma/ComparisonService/pom.xml
+target/classes/META-INF/maven/software.sigma/ComparisonService/pom.xml

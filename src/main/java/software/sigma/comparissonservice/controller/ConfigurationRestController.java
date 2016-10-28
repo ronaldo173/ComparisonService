@@ -54,6 +54,11 @@ public final class ConfigurationRestController {
 		return new EntityList<>(listConfigsProtocol);
 	}
 
+	@RequestMapping(path = "/test")
+	public String test() {
+		return "AXAXA WORK";
+	}
+
 	/**
 	 * Get configuration by it's id.
 	 * 
