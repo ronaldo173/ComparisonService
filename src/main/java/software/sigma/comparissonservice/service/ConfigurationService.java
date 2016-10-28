@@ -2,7 +2,6 @@ package software.sigma.comparissonservice.service;
 
 import java.util.List;
 
-import software.sigma.comparissonservice.model.Configuration;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 
 /**
@@ -18,7 +17,7 @@ public interface ConfigurationService {
 	 * 
 	 * @return list with objects
 	 */
-	List<Configuration> getAll();
+	List<ConfigurationProtocol> getAll();
 
 	/**
 	 * Get configuration by id.
@@ -27,43 +26,15 @@ public interface ConfigurationService {
 	 *            is id of configuration
 	 * @return configuration
 	 */
-	Configuration getById(int id);
+	ConfigurationProtocol getById(int id);
 
 	/**
-	 * Convert domain object {@link Configuration} to
-	 * {@link ConfigurationProtocol}.
-	 * 
-	 * @param configuration
-	 *            is object for converting
-	 * @return result {@link ConfigurationProtocol} object
-	 */
-	ConfigurationProtocol convertToProtocol(Configuration configuration);
-
-	/**
-	 * Convert from {@link ConfigurationProtocol} to {@link Configuration}.
-	 * 
-	 * @param configurationProtocol
-	 *            is object for converting
-	 * @return result {@link Configuration} object
-	 */
-	Configuration convertFromFrotocol(ConfigurationProtocol configurationProtocol);
-
-	/**
-	 * Convert List with {@link Configuration} to {@link ConfigurationProtocol}.
-	 * 
-	 * @param configurations
-	 *            is source list
-	 * @return list with results
-	 */
-	List<ConfigurationProtocol> convertToProtocolList(List<Configuration> configurations);
-
-	/**
-	 * Save configuration.
+	 * Save configuration to storage.
 	 * 
 	 * @param configuration
 	 *            is object for saving
 	 * @return true if success
 	 */
-	boolean save(Configuration configuration);
+	boolean save(ConfigurationProtocol configuration);
 
 }

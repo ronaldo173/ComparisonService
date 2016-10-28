@@ -51,9 +51,9 @@ public final class ConfigurationRestController {
 	 */
 	@RequestMapping(path = "/configuration", produces = MediaType.APPLICATION_XML_VALUE)
 	public EntityList<ConfigurationProtocol> getAllConfigs() {
-		List<Configuration> allConfigs = configService.getAll();
-		LOGGER.info("/configuration amount of retrieved configs --> " + allConfigs.size());
-		List<ConfigurationProtocol> listConfigsProtocol = configService.convertToProtocolList(allConfigs);
+		LOGGER.info("/configuration mapped");
+		List<ConfigurationProtocol> listConfigsProtocol = configService.getAll();
+		LOGGER.info("/configuration amount of retrieved configs --> " + listConfigsProtocol.size());
 		return new EntityList<>(listConfigsProtocol);
 	}
 
@@ -67,8 +67,7 @@ public final class ConfigurationRestController {
 	@RequestMapping(path = "/configuration/{id}", produces = MediaType.APPLICATION_XML_VALUE)
 	public ConfigurationProtocol getConfiguration(@PathVariable("id") final Integer id) {
 		LOGGER.info("/configuration/{id} get config by id -->" + id);
-		Configuration configuration = configService.getById(id);
-		return configService.convertToProtocol(configuration);
+		return configService.getById(id);
 	}
 
 	/**
@@ -84,7 +83,7 @@ public final class ConfigurationRestController {
 
 		LOGGER.info("/configuration POST get object: " + configurationProtocol.getName() + ", config length: "
 				+ configurationProtocol.getConfigContent().length());
-		boolean successSave = configService.save(configService.convertFromFrotocol(configurationProtocol));
+		boolean successSave = configService.save(configurationProtocol);
 		response.setSuccess(successSave);
 		LOGGER.info("Object saved: " + successSave);
 		return response;

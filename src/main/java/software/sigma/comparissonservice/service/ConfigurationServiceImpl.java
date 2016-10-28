@@ -1,6 +1,5 @@
 package software.sigma.comparissonservice.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,46 +28,22 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public List<Configuration> getAll() {
+	public List<ConfigurationProtocol> getAll() {
+		List<Configuration> configurations = dao.getAll();
 
-		return dao.getAll();
+		return ConfigurationsConverter.convertToProtocolList(configurations);
 	}
 
 	@Override
-	public Configuration getById(final int id) {
+	public ConfigurationProtocol getById(final int id) {
 
-		return dao.getById(id);
+		return ConfigurationsConverter.convert(dao.getById(id));
 
 	}
 
 	@Override
-	public ConfigurationProtocol convertToProtocol(final Configuration configuration) {
-
-		return ConfigurationsConverter.convert(configuration);
-	}
-
-	@Override
-	public List<ConfigurationProtocol> convertToProtocolList(final List<Configuration> configurations) {
-		List<ConfigurationProtocol> listResults = null;
-		if (configurations != null && !configurations.isEmpty()) {
-			listResults = new ArrayList<>();
-			for (Configuration configuration : configurations) {
-				ConfigurationProtocol configProtocol = convertToProtocol(configuration);
-				listResults.add(configProtocol);
-			}
-		}
-
-		return listResults;
-	}
-
-	@Override
-	public boolean save(final Configuration configuration) {
-		return dao.save(configuration);
-	}
-
-	@Override
-	public Configuration convertFromFrotocol(ConfigurationProtocol configurationProtocol) {
-		return ConfigurationsConverter.convert(configurationProtocol);
+	public boolean save(final ConfigurationProtocol configuration) {
+		return dao.save(ConfigurationsConverter.convert(configuration));
 	}
 
 }

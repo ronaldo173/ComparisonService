@@ -1,5 +1,8 @@
 package software.sigma.comparissonservice.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import software.sigma.comparissonservice.model.Configuration;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 
@@ -51,6 +54,26 @@ public final class ConfigurationsConverter {
 		}
 
 		return configuration;
+	}
+
+	/**
+	 * Convert List with {@link Configuration} to {@link ConfigurationProtocol}.
+	 * 
+	 * @param configurations
+	 *            is source list
+	 * @return list with results
+	 */
+	public static List<ConfigurationProtocol> convertToProtocolList(final List<Configuration> configurations) {
+		List<ConfigurationProtocol> listResults = null;
+		if (configurations != null && !configurations.isEmpty()) {
+			listResults = new ArrayList<>();
+			for (Configuration configuration : configurations) {
+				ConfigurationProtocol configProtocol = convert(configuration);
+				listResults.add(configProtocol);
+			}
+		}
+
+		return listResults;
 	}
 
 	/**
