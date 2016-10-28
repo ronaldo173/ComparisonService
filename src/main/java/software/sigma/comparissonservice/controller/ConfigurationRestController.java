@@ -6,12 +6,15 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import software.sigma.comparissonservice.model.Configuration;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 import software.sigma.comparissonservice.protocol.EntityList;
+import software.sigma.comparissonservice.protocol.Response;
 import software.sigma.comparissonservice.service.ConfigurationService;
 
 /**
@@ -54,11 +57,6 @@ public final class ConfigurationRestController {
 		return new EntityList<>(listConfigsProtocol);
 	}
 
-	@RequestMapping(path = "/test")
-	public String test() {
-		return "AXAXA WORK";
-	}
-
 	/**
 	 * Get configuration by it's id.
 	 * 
@@ -71,6 +69,25 @@ public final class ConfigurationRestController {
 		LOGGER.info("/configuration/{id} get config by id -->" + id);
 		Configuration configuration = configService.getById(id);
 		return configService.convertToProtocol(configuration);
+	}
+
+	/**
+	 * Save configuration, received from user in XML format.
+	 * 
+	 * @param configurationProtocol
+	 *            is config object from user
+	 * @return result of operation
+	 */
+	@RequestMapping(path = "/configuration", method = RequestMethod.POST, produces = MediaType.APPLICATION_XML_VALUE)
+	public Response testRequestBody(@RequestBody final ConfigurationProtocol configurationProtocol) {
+		Response response = new Response();
+
+		LOGGER.info("/configuration POST get object: " + configurationProtocol.getName() + ", config length: "
+				+ configurationProtocol.getConfigContent().length());
+		boolean successSave = configService.save(configService.convertFromFrotocol(configurationProtocol));
+		response.setSuccess(successSave);
+		LOGGER.info("Object saved: " + successSave);
+		return response;
 	}
 
 }

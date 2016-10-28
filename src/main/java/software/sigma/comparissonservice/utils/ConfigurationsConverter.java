@@ -1,22 +1,26 @@
 package software.sigma.comparissonservice.utils;
 
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.stereotype.Component;
-
 import software.sigma.comparissonservice.model.Configuration;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 
 /**
- * Convert {@link Configuration} object to {@link ConfigurationProtocol} object.
+ * Helper class for work with configuration objects.Convert
+ * {@link Configuration} object to {@link ConfigurationProtocol} object and vice
+ * versa.
  * 
  * @author alexandr.efimov
  *
  */
-@Component
-public class ConfigurationsConverter implements Converter<Configuration, ConfigurationProtocol> {
+public final class ConfigurationsConverter {
 
-	@Override
-	public ConfigurationProtocol convert(final Configuration source) {
+	/**
+	 * Convert {@link Configuration} to {@link ConfigurationProtocol}.
+	 * 
+	 * @param source
+	 *            is source object
+	 * @return is result object
+	 */
+	public static ConfigurationProtocol convert(final Configuration source) {
 
 		ConfigurationProtocol configurationProtocol = null;
 		if (source != null) {
@@ -27,6 +31,33 @@ public class ConfigurationsConverter implements Converter<Configuration, Configu
 		}
 
 		return configurationProtocol;
+	}
+
+	/**
+	 * Convert {@link ConfigurationProtocol} to {@link Configuration}.
+	 * 
+	 * @param source
+	 *            is source object
+	 * @return is result object
+	 */
+	public static Configuration convert(final ConfigurationProtocol source) {
+
+		Configuration configuration = null;
+		if (source != null) {
+			configuration = new Configuration();
+			configuration.setId(source.getId());
+			configuration.setName(source.getName());
+			configuration.setConfigContent(source.getConfigContent());
+		}
+
+		return configuration;
+	}
+
+	/**
+	 * Until class, not for creating - use static methods.
+	 */
+	private ConfigurationsConverter() {
+		throw new IllegalAccessError();
 	}
 
 }

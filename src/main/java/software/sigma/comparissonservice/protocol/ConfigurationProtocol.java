@@ -2,8 +2,9 @@ package software.sigma.comparissonservice.protocol;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.eclipse.persistence.oxm.annotations.XmlCDATA;
 
 import software.sigma.comparissonservice.model.Configuration;
 
@@ -28,7 +29,7 @@ public class ConfigurationProtocol {
 	/**
 	 * Configuration represented as byte array.
 	 */
-	@XmlElement(name = "configContent")
+	@XmlCDATA
 	private String configContent;
 
 	public int getId() {
