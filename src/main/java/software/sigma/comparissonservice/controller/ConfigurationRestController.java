@@ -2,6 +2,8 @@ package software.sigma.comparissonservice.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -78,14 +80,13 @@ public final class ConfigurationRestController {
 	 * @return result of operation
 	 */
 	@RequestMapping(path = "/configuration", method = RequestMethod.POST, produces = MediaType.APPLICATION_XML_VALUE)
-	public Response testRequestBody(@RequestBody final ConfigurationProtocol configurationProtocol) {
+	public Response saveConfiguration(@Valid @RequestBody final ConfigurationProtocol configurationProtocol) {
 		Response response = new Response();
 
-		LOGGER.info("/configuration POST get object: " + configurationProtocol.getName() + ", config length: "
-				+ configurationProtocol.getConfigContent().length());
+		LOGGER.info("/configuration POST get object for save: " + configurationProtocol);
 		boolean successSave = configService.save(configurationProtocol);
 		response.setSuccess(successSave);
-		LOGGER.info("Object saved: " + successSave);
+		LOGGER.info("Object saved success: " + successSave);
 		return response;
 	}
 

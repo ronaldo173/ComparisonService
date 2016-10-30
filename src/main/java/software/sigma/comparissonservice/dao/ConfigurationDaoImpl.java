@@ -70,7 +70,8 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
 	@Override
 	public Configuration getById(final int id) {
-		Configuration configuration = jdbcTemplate.queryForObject(SQL_FIND_CONFIG, new Object[] { id },
+		Configuration configuration = null;
+		List<Configuration> listConfigs = jdbcTemplate.query(SQL_FIND_CONFIG, new Object[] { id },
 				new RowMapper<Configuration>() {
 
 					@Override
@@ -83,7 +84,11 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 					}
 
 				});
-
+		if (listConfigs.size() == 1) {
+			configuration = listConfigs.get(0);
+		} else {
+			configuration = new Configuration();
+		}
 		return configuration;
 	}
 

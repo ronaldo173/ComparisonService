@@ -11,7 +11,7 @@ public enum ErrorConstants {
 	 * Constants with error messages inside. Message can be retrieved with
 	 * getter.
 	 */
-	ERR_NO_DATA_FOUND("No data found"), ERR_SHOULD_BE_TYPE(" should be of type ");
+	ERR_SHOULD_BE_TYPE(" should be of type ");
 
 	/**
 	 * Message for retrieving.

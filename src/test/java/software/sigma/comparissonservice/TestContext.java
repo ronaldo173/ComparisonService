@@ -1,5 +1,7 @@
 package software.sigma.comparissonservice;
 
+import javax.sql.DataSource;
+
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,5 +32,10 @@ public class TestContext {
 	@Bean
 	JdbcTemplate jdbcTemplate() {
 		return Mockito.mock(JdbcTemplate.class);
+	}
+
+	@Bean
+	DataSource dataSource() {
+		return Mockito.mock(DataSource.class);
 	}
 }

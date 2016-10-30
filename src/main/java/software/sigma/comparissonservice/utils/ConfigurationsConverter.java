@@ -64,9 +64,9 @@ public final class ConfigurationsConverter {
 	 * @return list with results
 	 */
 	public static List<ConfigurationProtocol> convertToProtocolList(final List<Configuration> configurations) {
-		List<ConfigurationProtocol> listResults = null;
-		if (configurations != null && !configurations.isEmpty()) {
-			listResults = new ArrayList<>();
+		List<ConfigurationProtocol> listResults = new ArrayList<>();
+		if (configurations != null) {
+
 			for (Configuration configuration : configurations) {
 				ConfigurationProtocol configProtocol = convert(configuration);
 				listResults.add(configProtocol);

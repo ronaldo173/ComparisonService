@@ -12,7 +12,7 @@ import software.sigma.comparissonservice.utils.ConfigurationsConverter;
 
 /**
  * Implementation of {@link ConfigurationService} for work with
- * {@link Configuration}
+ * {@link Configuration}.
  * 
  * @author alexandr.efimov
  *
@@ -30,15 +30,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public List<ConfigurationProtocol> getAll() {
 		List<Configuration> configurations = dao.getAll();
-
 		return ConfigurationsConverter.convertToProtocolList(configurations);
 	}
 
 	@Override
 	public ConfigurationProtocol getById(final int id) {
-
-		return ConfigurationsConverter.convert(dao.getById(id));
-
+		Configuration configById = dao.getById(id);
+		return ConfigurationsConverter.convert(configById);
 	}
 
 	@Override

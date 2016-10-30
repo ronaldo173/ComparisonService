@@ -11,7 +11,7 @@ public class Configuration {
 	/**
 	 * Is id of configuration.
 	 */
-	private int id;
+	private Integer id;
 	/**
 	 * Name of configuration.
 	 */
@@ -21,11 +21,11 @@ public class Configuration {
 	 */
 	private String configContent;
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
