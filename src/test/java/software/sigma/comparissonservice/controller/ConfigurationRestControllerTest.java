@@ -33,7 +33,6 @@ import software.sigma.comparissonservice.TestUtils;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 import software.sigma.comparissonservice.service.ConfigurationService;
 
-//TODO in progress
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { App.class, TestContext.class })
 @WebAppConfiguration
@@ -173,14 +172,6 @@ public class ConfigurationRestControllerTest {
 				.andExpect(xpath(responseXpath).booleanValue(true)).andDo(MockMvcResultHandlers.print());
 		verify(configServiceMock, times(1)).save(configurationProtocol);
 		verifyNoMoreInteractions(configServiceMock);
-	}
-
-	// TODO
-	@Test
-	public void testSaveEntitySendEmptyRequestBody() throws Exception {
-		mockMvc.perform(post(URL_PREFIX + "configuration/").contentType(MediaType.APPLICATION_XML).content(new byte[1])
-				.accept(MediaType.APPLICATION_XML)).andDo(MockMvcResultHandlers.print());
-
 	}
 
 	/**
