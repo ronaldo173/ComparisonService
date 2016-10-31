@@ -118,8 +118,34 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 	}
 
 	@Override
+	@Transactional
 	public boolean update(final Configuration configuration) {
-		// TODO Auto-generated method stub
+
+		// first update config_content from table configuration_schema
+		// get id of current config schema
+		String sqlGetIdOfSchemaForConfig = SQL_SELECT_ID_OF_CONFIG_SCHEMA_WHERE_ID + configuration.getId();
+		final int idOfSchema = jdbcTemplate.queryForObject(sqlGetIdOfSchemaForConfig, Integer.class);
+
+		// update config_content
+		int updateConfigContentRowsAffected = jdbcTemplate.update(SQL_UPDATE_CONFIG_CONTENT,
+				new PreparedStatementSetter() {
+					@Override
+					public void setValues(final PreparedStatement ps) throws SQLException {
+						ps.setString(1, configuration.getConfigContent());
+						ps.setInt(2, idOfSchema);
+					}
+				});
+
+		// update configuration info
+		int updateConfigInfoRowsAffected = jdbcTemplate.update(SQL_UPDATE_CONFIG_INFO, new PreparedStatementSetter() {
+			@Override
+			public void setValues(final PreparedStatement ps) throws SQLException {
+				ps.setString(1, configuration.getName());
+				ps.setInt(2, configuration.getId());
+			}
+
+		});
+		return updateConfigContentRowsAffected == 1 && updateConfigInfoRowsAffected == 1;
 	}
 
 	@Override
