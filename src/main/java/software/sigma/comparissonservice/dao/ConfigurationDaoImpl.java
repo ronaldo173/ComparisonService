@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -55,6 +56,10 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 	 * SQL query for insert configuration information.
 	 */
 	private static final String SQL_INSERT_CONFIG_INFO = "INSERT INTO configuration(name, id_schema) VALUES(?, ?);";
+
+	private static final String SQL_UPDATE_CONFIG_CONTENT = "UPDATE configuration_schema SET config_content =? WHERE id = ?;";
+	private static final String SQL_UPDATE_CONFIG_INFO = "UPDATE configuration SET name = ? WHERE id = ?;";
+	private static final String SQL_SELECT_ID_OF_CONFIG_SCHEMA_WHERE_ID = "SELECT id_schema FROM configuration where id = ";
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -115,7 +120,6 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 	@Override
 	public boolean update(final Configuration configuration) {
 		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override

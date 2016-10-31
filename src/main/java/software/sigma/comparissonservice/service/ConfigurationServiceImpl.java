@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import software.sigma.comparissonservice.dao.ConfigurationDao;
+import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.model.Configuration;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 import software.sigma.comparissonservice.utils.ConfigurationsConverter;
@@ -42,6 +43,18 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public boolean save(final ConfigurationProtocol configuration) {
 		return dao.save(ConfigurationsConverter.convert(configuration));
+	}
+
+	@Override
+	public boolean update(final ConfigurationProtocol configurationProtocol) throws ApplicationException {
+		boolean updateSuccess = false;
+
+		try {
+			updateSuccess = dao.update(ConfigurationsConverter.convert(configurationProtocol));
+		} catch (Throwable e) {
+			throw new ApplicationException("Can't update configuration. Id: " + configurationProtocol.getId(), e);
+		}
+		return updateSuccess;
 	}
 
 }

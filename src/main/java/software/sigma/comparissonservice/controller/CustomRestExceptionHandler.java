@@ -8,6 +8,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import software.sigma.comparissonservice.constants.ErrorConstants;
+import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.protocol.Response;
 
 @ControllerAdvice
@@ -27,8 +28,16 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 		String error = exception.getName() + ErrorConstants.ERR_SHOULD_BE_TYPE.getValue()
 				+ exception.getRequiredType().getName();
 
-		LOGGER.error(exception.getName(), exception.getCause());
+		LOGGER.error(exception);
 		return new Response(false, error);
+	}
+
+	@ExceptionHandler(ApplicationException.class)
+	@ResponseBody
+	public Response handlePersistException(final ApplicationException exception) {
+		LOGGER.error(exception);
+		return new Response(false, exception.getMessage());
+
 	}
 
 }

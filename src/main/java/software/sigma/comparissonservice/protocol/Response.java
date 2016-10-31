@@ -1,5 +1,6 @@
 package software.sigma.comparissonservice.protocol;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class Response {
 	private List<String> errors;
 
 	public Response() {
+		errors = new ArrayList<>();
 	}
 
 	public Response(boolean isSuccess, List<String> errors) {

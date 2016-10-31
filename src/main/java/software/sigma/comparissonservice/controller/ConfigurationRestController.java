@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.model.Configuration;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 import software.sigma.comparissonservice.protocol.EntityList;
@@ -90,4 +91,18 @@ public final class ConfigurationRestController {
 		return response;
 	}
 
+	@RequestMapping(path = "/configuration/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_XML_VALUE)
+	public Response updateConfiguration(@PathVariable("id") final Integer id,
+			@Valid @RequestBody final ConfigurationProtocol configurationProtocol) throws ApplicationException {
+		Response response = new Response();
+
+		LOGGER.info("/configuration PUT, id for update: " + id + "\n get object for update: " + configurationProtocol);
+		configurationProtocol.setId(id);
+
+		boolean successSave = configService.update(configurationProtocol);
+		response.setSuccess(successSave);
+
+		LOGGER.info("Object updated success: " + successSave);
+		return response;
+	}
 }

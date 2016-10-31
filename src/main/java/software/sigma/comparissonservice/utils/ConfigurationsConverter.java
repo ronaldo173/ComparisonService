@@ -9,7 +9,7 @@ import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 /**
  * Helper class for work with configuration objects.Convert
  * {@link Configuration} object to {@link ConfigurationProtocol} object and vice
- * versa.
+ * versa. Not for creating, use static method.
  * 
  * @author alexandr.efimov
  *

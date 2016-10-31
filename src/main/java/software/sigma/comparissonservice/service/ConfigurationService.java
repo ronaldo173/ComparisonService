@@ -2,6 +2,7 @@ package software.sigma.comparissonservice.service;
 
 import java.util.List;
 
+import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 
 /**
@@ -36,5 +37,17 @@ public interface ConfigurationService {
 	 * @return true if success
 	 */
 	boolean save(ConfigurationProtocol configuration);
+
+	/**
+	 * Update configuration in storage, criteria for update - id of
+	 * configuration.
+	 * 
+	 * @param configurationProtocol
+	 *            is updated object
+	 * @return true if success, else - false(if id is null also)
+	 * @throws PersistException
+	 *             if can't update object
+	 */
+	boolean update(ConfigurationProtocol configurationProtocol) throws ApplicationException;
 
 }
