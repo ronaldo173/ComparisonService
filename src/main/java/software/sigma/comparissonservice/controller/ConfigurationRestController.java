@@ -107,13 +107,13 @@ public final class ConfigurationRestController {
 			@Valid @RequestBody final ConfigurationProtocol configurationProtocol) throws ApplicationException {
 		Response response = new Response();
 
-		LOGGER.info("/configuration PUT, id for update: " + id + "\n get object for update: " + configurationProtocol);
+		LOGGER.debug("/configuration PUT, id for update: " + id + "\n get object for update: " + configurationProtocol);
 		configurationProtocol.setId(id);
 
 		boolean successSave = configService.update(configurationProtocol);
 		response.setSuccess(successSave);
 
-		LOGGER.info("Object updated success: " + successSave);
+		LOGGER.debug("Object updated success: " + successSave);
 		return response;
 	}
 
@@ -121,12 +121,12 @@ public final class ConfigurationRestController {
 	public Response deleteConfiguration(@PathVariable("id") final Integer id) throws ApplicationException {
 		Response response = new Response();
 
-		LOGGER.info("/configuration PUT, id for DELETE: " + id);
+		LOGGER.debug("/configuration DELETE, id for DELETE config: " + id);
 
 		boolean successSave = configService.delete(id);
 		response.setSuccess(successSave);
 
-		LOGGER.info("Object deleted success: " + successSave);
+		LOGGER.debug("Object deleted success: " + successSave);
 		return response;
 	}
 }
