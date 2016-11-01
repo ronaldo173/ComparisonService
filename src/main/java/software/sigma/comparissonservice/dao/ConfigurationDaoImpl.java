@@ -60,6 +60,8 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 	private static final String SQL_UPDATE_CONFIG_CONTENT = "UPDATE configuration_schema SET config_content =? WHERE id = ?;";
 	private static final String SQL_UPDATE_CONFIG_INFO = "UPDATE configuration SET name = ? WHERE id = ?;";
 	private static final String SQL_SELECT_ID_OF_CONFIG_SCHEMA_WHERE_ID = "SELECT id_schema FROM configuration where id = ";
+	private static final String SQL_DELETE_CONFIG_CONTENT = "DELETE FROM configuration_schema WHERE id = ?;";
+	private static final String SQL_DELETE_CONFIG_INFO = "DELETE FROM configuration WHERE id = ?;";
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -150,8 +152,14 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
 	@Override
 	public boolean delete(final int id) {
-		// TODO Auto-generated method stub
-		return false;
+
+		// first delete config_content from table configuration_schema
+		String sqlGetIdOfSchemaForConfig = SQL_SELECT_ID_OF_CONFIG_SCHEMA_WHERE_ID + id;
+		final int idOfSchema = jdbcTemplate.queryForObject(sqlGetIdOfSchemaForConfig, Integer.class);
+
+		int deleteConfigContentRowsAffected = jdbcTemplate.update(SQL_DELETE_CONFIG_CONTENT, idOfSchema);
+		jdbcTemplate.update(SQL_DELETE_CONFIG_INFO, id);
+		return deleteConfigContentRowsAffected == 1;
 	}
 
 }

@@ -91,6 +91,17 @@ public final class ConfigurationRestController {
 		return response;
 	}
 
+	/**
+	 * Update configuration, received from user in XML format.
+	 * 
+	 * @param id
+	 *            is id of config for updating
+	 * @param configurationProtocol
+	 *            is updated object
+	 * @return result of operation
+	 * @throws ApplicationException
+	 *             if can't update
+	 */
 	@RequestMapping(path = "/configuration/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_XML_VALUE)
 	public Response updateConfiguration(@PathVariable("id") final Integer id,
 			@Valid @RequestBody final ConfigurationProtocol configurationProtocol) throws ApplicationException {
@@ -103,6 +114,19 @@ public final class ConfigurationRestController {
 		response.setSuccess(successSave);
 
 		LOGGER.info("Object updated success: " + successSave);
+		return response;
+	}
+
+	@RequestMapping(path = "/configuration/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_XML_VALUE)
+	public Response deleteConfiguration(@PathVariable("id") final Integer id) throws ApplicationException {
+		Response response = new Response();
+
+		LOGGER.info("/configuration PUT, id for DELETE: " + id);
+
+		boolean successSave = configService.delete(id);
+		response.setSuccess(successSave);
+
+		LOGGER.info("Object deleted success: " + successSave);
 		return response;
 	}
 }

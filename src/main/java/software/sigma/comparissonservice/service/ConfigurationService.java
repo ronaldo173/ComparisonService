@@ -45,9 +45,20 @@ public interface ConfigurationService {
 	 * @param configurationProtocol
 	 *            is updated object
 	 * @return true if success, else - false(if id is null also)
-	 * @throws PersistException
+	 * @throws ApplicationException
 	 *             if can't update object
 	 */
 	boolean update(ConfigurationProtocol configurationProtocol) throws ApplicationException;
+
+	/**
+	 * Delete configuration by id.
+	 * 
+	 * @param id
+	 *            of config for delete
+	 * @return true if success
+	 * @throws ApplicationException
+	 *             if can't delete object
+	 */
+	boolean delete(Integer id) throws ApplicationException;
 
 }

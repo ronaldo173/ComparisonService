@@ -1,5 +1,7 @@
 package software.sigma.comparissonservice.exception;
 
+import org.apache.log4j.Logger;
+
 /**
  * Exception from service -> means that there is some problem.
  * 
@@ -8,14 +10,17 @@ package software.sigma.comparissonservice.exception;
  */
 public class ApplicationException extends Exception {
 
+	private static final Logger LOGGER = Logger.getLogger(ApplicationException.class);
 	private static final long serialVersionUID = 6140332572083713742L;
 
 	public ApplicationException(String message, Throwable cause) {
 		super(message, cause);
+		LOGGER.error(cause);
 	}
 
 	public ApplicationException(Throwable cause) {
 		super(cause);
+		LOGGER.error(cause);
 	}
 
 }

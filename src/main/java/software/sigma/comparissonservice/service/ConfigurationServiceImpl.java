@@ -57,4 +57,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		return updateSuccess;
 	}
 
+	@Override
+	public boolean delete(final Integer id) throws ApplicationException {
+		boolean deleteSuccess = false;
+		try {
+			deleteSuccess = dao.delete(id);
+		} catch (Throwable e) {
+			throw new ApplicationException("Can't delete configuration. Id: " + id, e);
+		}
+
+		return deleteSuccess;
+	}
+
 }
