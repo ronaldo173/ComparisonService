@@ -15,12 +15,16 @@ public class ApplicationException extends Exception {
 
 	public ApplicationException(String message, Throwable cause) {
 		super(message, cause);
-		LOGGER.error(cause);
+		LOGGER.info(cause);
 	}
 
 	public ApplicationException(Throwable cause) {
 		super(cause);
-		LOGGER.error(cause);
+		LOGGER.info(cause);
+	}
+
+	public ApplicationException(String message) {
+		super(message);
 	}
 
 }

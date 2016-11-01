@@ -18,6 +18,7 @@ import software.sigma.comparissonservice.dao.ConfigurationDao;
 import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.model.Configuration;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
+import software.sigma.comparissonservice.utils.ConfigurationsConverter;
 
 /**
  * Test configuration service.
@@ -101,12 +102,16 @@ public class ConfigurationServiceImplTest {
 	}
 
 	@Test
-	public void testUpdateConfig() throws ApplicationException {
+	public void testUpdateConfigValidContent() throws ApplicationException {
+		String configContent = "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"
+				+ "<xs:element name=\"note\"></xs:element></xs:schema>";
 		int idForUpdate = 1;
 		Configuration configuration = new Configuration();
 		configuration.setId(idForUpdate);
+		configuration.setConfigContent(configContent);
 		ConfigurationProtocol configProtocol = new ConfigurationProtocol();
 		configProtocol.setId(idForUpdate);
+		configProtocol.setConfigContent(configContent);
 
 		when(daoMocked.update(configuration)).thenReturn(true);
 		boolean updateSuccess = configService.update(configProtocol);
@@ -115,6 +120,44 @@ public class ConfigurationServiceImplTest {
 		verifyNoMoreInteractions(daoMocked);
 
 		Assert.assertTrue(updateSuccess);
+	}
+
+	@Test(expected = ApplicationException.class)
+	public void testUpdateConfigInvalidContentShouldThrowException() throws ApplicationException {
+		String configContent = "NOT XSD SCHEMA";
+		int idForUpdate = 1;
+		ConfigurationProtocol configProtocol = new ConfigurationProtocol();
+		configProtocol.setId(idForUpdate);
+		configProtocol.setConfigContent(configContent);
+
+		configService.update(configProtocol);
+	}
+
+	public void testAddConfigValidContent() throws ApplicationException {
+		String configContent = "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"
+				+ "<xs:element name=\"note\"></xs:element></xs:schema>";
+		ConfigurationProtocol configProtocol = new ConfigurationProtocol();
+		configProtocol.setConfigContent(configContent);
+		configProtocol.setName("test");
+		Configuration configuration = ConfigurationsConverter.convert(configProtocol);
+
+		when(daoMocked.save(configuration)).thenReturn(true);
+		boolean saveSuccess = configService.save(configProtocol);
+		verify(daoMocked, times(1)).save(configuration);
+		verifyNoMoreInteractions(daoMocked);
+
+		Assert.assertTrue(saveSuccess);
+	}
+
+	@Test(expected = ApplicationException.class)
+	public void testAddConfigWithInvalidContentShouldThrowException() throws ApplicationException {
+		String configContent = "NOT XSD SCHEMA";
+		int idForUpdate = 1;
+		ConfigurationProtocol configProtocol = new ConfigurationProtocol();
+		configProtocol.setId(idForUpdate);
+		configProtocol.setConfigContent(configContent);
+
+		configService.save(configProtocol);
 	}
 
 }

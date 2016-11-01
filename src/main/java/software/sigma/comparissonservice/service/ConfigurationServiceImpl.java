@@ -1,10 +1,17 @@
 package software.sigma.comparissonservice.service;
 
+import java.io.StringReader;
 import java.util.List;
+
+import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.xml.sax.SAXException;
 
+import software.sigma.comparissonservice.constants.ErrorConstants;
 import software.sigma.comparissonservice.dao.ConfigurationDao;
 import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.model.Configuration;
@@ -41,20 +48,55 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public boolean save(final ConfigurationProtocol configuration) {
-		return dao.save(ConfigurationsConverter.convert(configuration));
+	public boolean save(final ConfigurationProtocol configuration) throws ApplicationException {
+		boolean saveSuccess = false;
+
+		if (validateConfigContent(configuration.getConfigContent())) {
+			saveSuccess = dao.save(ConfigurationsConverter.convert(configuration));
+		} else {
+			throw new ApplicationException(ErrorConstants.ERR_NOT_VALID_CONFIG_CONTENT.getValue());
+		}
+		return saveSuccess;
 	}
 
 	@Override
 	public boolean update(final ConfigurationProtocol configurationProtocol) throws ApplicationException {
 		boolean updateSuccess = false;
 
-		try {
-			updateSuccess = dao.update(ConfigurationsConverter.convert(configurationProtocol));
-		} catch (Throwable e) {
-			throw new ApplicationException("Can't update configuration. Id: " + configurationProtocol.getId(), e);
+		String configContent = configurationProtocol.getConfigContent();
+		if (validateConfigContent(configContent)) {
+			try {
+
+				updateSuccess = dao.update(ConfigurationsConverter.convert(configurationProtocol));
+			} catch (Throwable e) {
+				throw new ApplicationException("Can't update configuration. Id: " + configurationProtocol.getId(), e);
+			}
+		} else {
+			throw new ApplicationException(ErrorConstants.ERR_NOT_VALID_CONFIG_CONTENT.getValue());
 		}
+
 		return updateSuccess;
+
+	}
+
+	/**
+	 * Validate xsd schema according to
+	 * {@link http://www.w3.org/2001/XMLSchema}.
+	 * 
+	 * @param configContent
+	 *            content of schema
+	 * @return true if valid xsd schema
+	 */
+	private boolean validateConfigContent(final String configContent) {
+		boolean isValid = true;
+
+		SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		try {
+			factory.newSchema(new StreamSource(new StringReader(configContent)));
+		} catch (SAXException e) {
+			isValid = false;
+		}
+		return isValid;
 	}
 
 	@Override

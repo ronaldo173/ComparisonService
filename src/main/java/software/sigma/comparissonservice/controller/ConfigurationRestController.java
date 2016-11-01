@@ -54,9 +54,9 @@ public final class ConfigurationRestController {
 	 */
 	@RequestMapping(path = "/configuration", produces = MediaType.APPLICATION_XML_VALUE)
 	public EntityList<ConfigurationProtocol> getAllConfigs() {
-		LOGGER.info("/configuration mapped");
+		LOGGER.debug("/configuration mapped");
 		List<ConfigurationProtocol> listConfigsProtocol = configService.getAll();
-		LOGGER.info("/configuration amount of retrieved configs --> " + listConfigsProtocol.size());
+		LOGGER.debug("/configuration amount of retrieved configs --> " + listConfigsProtocol.size());
 		return new EntityList<>(listConfigsProtocol);
 	}
 
@@ -69,7 +69,7 @@ public final class ConfigurationRestController {
 	 */
 	@RequestMapping(path = "/configuration/{id}", produces = MediaType.APPLICATION_XML_VALUE)
 	public ConfigurationProtocol getConfiguration(@PathVariable("id") final Integer id) {
-		LOGGER.info("/configuration/{id} get config by id -->" + id);
+		LOGGER.debug("/configuration/{id} get config by id -->" + id);
 		return configService.getById(id);
 	}
 
@@ -79,15 +79,18 @@ public final class ConfigurationRestController {
 	 * @param configurationProtocol
 	 *            is config object from user
 	 * @return result of operation
+	 * @throws ApplicationException
+	 *             if can't save
 	 */
 	@RequestMapping(path = "/configuration", method = RequestMethod.POST, produces = MediaType.APPLICATION_XML_VALUE)
-	public Response saveConfiguration(@Valid @RequestBody final ConfigurationProtocol configurationProtocol) {
+	public Response saveConfiguration(@Valid @RequestBody final ConfigurationProtocol configurationProtocol)
+			throws ApplicationException {
 		Response response = new Response();
 
-		LOGGER.info("/configuration POST get object for save: " + configurationProtocol);
+		LOGGER.debug("/configuration POST get object for save: " + configurationProtocol);
 		boolean successSave = configService.save(configurationProtocol);
 		response.setSuccess(successSave);
-		LOGGER.info("Object saved success: " + successSave);
+		LOGGER.debug("Object saved success: " + successSave);
 		return response;
 	}
 

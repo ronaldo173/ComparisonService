@@ -35,8 +35,10 @@ public interface ConfigurationService {
 	 * @param configuration
 	 *            is object for saving
 	 * @return true if success
+	 * @throws ApplicationException
+	 *             if can't save object
 	 */
-	boolean save(ConfigurationProtocol configuration);
+	boolean save(ConfigurationProtocol configuration) throws ApplicationException;
 
 	/**
 	 * Update configuration in storage, criteria for update - id of
