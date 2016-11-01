@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import software.sigma.comparissonservice.TestUtils;
 import software.sigma.comparissonservice.dao.ConfigurationDao;
+import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.model.Configuration;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 
@@ -84,6 +85,36 @@ public class ConfigurationServiceImplTest {
 		config2.setName("name2");
 		config2.setConfigContent("content2");
 		return Arrays.asList(config1, config2);
+	}
+
+	@Test
+	public void testDeleteConfig() throws ApplicationException {
+		int idForDelete = 1;
+
+		when(daoMocked.delete(idForDelete)).thenReturn(true);
+		boolean deleteSuccess = configService.delete(idForDelete);
+
+		verify(daoMocked, times(1)).delete(idForDelete);
+		verifyNoMoreInteractions(daoMocked);
+
+		Assert.assertTrue(deleteSuccess);
+	}
+
+	@Test
+	public void testUpdateConfig() throws ApplicationException {
+		int idForUpdate = 1;
+		Configuration configuration = new Configuration();
+		configuration.setId(idForUpdate);
+		ConfigurationProtocol configProtocol = new ConfigurationProtocol();
+		configProtocol.setId(idForUpdate);
+
+		when(daoMocked.update(configuration)).thenReturn(true);
+		boolean updateSuccess = configService.update(configProtocol);
+
+		verify(daoMocked, times(1)).update(configuration);
+		verifyNoMoreInteractions(daoMocked);
+
+		Assert.assertTrue(updateSuccess);
 	}
 
 }

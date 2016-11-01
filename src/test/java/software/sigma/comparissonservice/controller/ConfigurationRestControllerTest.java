@@ -4,6 +4,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -224,6 +225,39 @@ public class ConfigurationRestControllerTest {
 				.content(contentForTest).accept(MediaType.APPLICATION_XML))
 				.andExpect(xpath(responseXpath).booleanValue(false)).andDo(MockMvcResultHandlers.print());
 		verify(configServiceMock, times(1)).update(configurationProtocol);
+		verifyNoMoreInteractions(configServiceMock);
+
+	}
+
+	@Test
+	public void testDeleteEntityShouldReturnSuccessResponse() throws Exception {
+		String responseXpath = "response/isSuccess";
+
+		int id = 1;
+		when(configServiceMock.delete(id)).thenReturn(true);
+
+		mockMvc.perform(delete(URL_PREFIX + "configuration/" + id).contentType(MediaType.APPLICATION_XML)
+				.accept(MediaType.APPLICATION_XML)).andExpect(xpath(responseXpath).booleanValue(true))
+				.andDo(MockMvcResultHandlers.print());
+
+		verify(configServiceMock, times(1)).delete(id);
+		verifyNoMoreInteractions(configServiceMock);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testDeleteEntityShouldReturnErrorResponse() throws Exception {
+		String responseXpath = "response/isSuccess";
+
+		int id = 1;
+		when(configServiceMock.delete(id)).thenThrow(ApplicationException.class);
+
+		mockMvc.perform(delete(URL_PREFIX + "configuration/" + id).contentType(MediaType.APPLICATION_XML)
+				.accept(MediaType.APPLICATION_XML)).andExpect(xpath(responseXpath).booleanValue(false))
+				.andDo(MockMvcResultHandlers.print());
+
+		verify(configServiceMock, times(1)).delete(id);
 		verifyNoMoreInteractions(configServiceMock);
 
 	}
