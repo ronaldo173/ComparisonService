@@ -6,9 +6,10 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import software.sigma.comparissonservice.controller.ConfigurationRestControllerTest;
 import software.sigma.comparissonservice.service.ConfigurationServiceImplTest;
+import software.sigma.comparissonservice.service.SortServiceImplTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({ ConfigurationRestControllerTest.class, ConfigurationServiceImplTest.class })
+@SuiteClasses({ ConfigurationRestControllerTest.class, ConfigurationServiceImplTest.class, SortServiceImplTest.class })
 public class AllTests {
 
 }

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
-import software.sigma.comparissonservice.constants.ErrorConstants;
 import software.sigma.comparissonservice.dao.ConfigurationDao;
 import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.model.Configuration;
@@ -27,6 +26,8 @@ import software.sigma.comparissonservice.utils.ConfigurationsConverter;
  */
 @Service
 public class ConfigurationServiceImpl implements ConfigurationService {
+
+	private static final String ERR_MESSAGE_NOT_VALID_CONFIG_CONTENT = "Configuration content(xsd schema) is not valid";
 
 	@Autowired
 	private ConfigurationDao dao;
@@ -54,7 +55,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		if (validateConfigContent(configuration.getConfigContent())) {
 			saveSuccess = dao.save(ConfigurationsConverter.convert(configuration));
 		} else {
-			throw new ApplicationException(ErrorConstants.ERR_NOT_VALID_CONFIG_CONTENT.getValue());
+			throw new ApplicationException(ERR_MESSAGE_NOT_VALID_CONFIG_CONTENT);
 		}
 		return saveSuccess;
 	}
@@ -72,7 +73,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 				throw new ApplicationException("Can't update configuration. Id: " + configurationProtocol.getId(), e);
 			}
 		} else {
-			throw new ApplicationException(ErrorConstants.ERR_NOT_VALID_CONFIG_CONTENT.getValue());
+			throw new ApplicationException(ERR_MESSAGE_NOT_VALID_CONFIG_CONTENT);
 		}
 
 		return updateSuccess;

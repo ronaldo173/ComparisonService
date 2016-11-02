@@ -39,7 +39,7 @@ public class ConfigurationServiceImplTest {
 	}
 
 	@Test
-	public void testGetByIdShouldReturnFoundedEntity() {
+	public void testGetByIdShouldReturnFoundEntity() {
 		Configuration configInDao = TestUtils.getConfigsList().get(0);
 		int idForTest = configInDao.getId();
 		when(daoMocked.getById(idForTest)).thenReturn(configInDao);

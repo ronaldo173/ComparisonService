@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import software.sigma.comparissonservice.constants.ErrorConstants;
 import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.protocol.Response;
 
@@ -25,17 +24,16 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	@ResponseBody
 	public Response handleMethodArgumentTypeMismatch(final MethodArgumentTypeMismatchException exception) {
-		String error = exception.getName() + ErrorConstants.ERR_SHOULD_BE_TYPE.getValue()
-				+ exception.getRequiredType().getName();
+		String errorMessage = exception.getName() + " should be of type " + exception.getRequiredType().getName();
 
-		LOGGER.error(exception);
-		return new Response(false, error);
+		LOGGER.debug(exception.getMessage());
+		return new Response(false, errorMessage);
 	}
 
 	@ExceptionHandler(ApplicationException.class)
 	@ResponseBody
 	public Response handlePersistException(final ApplicationException exception) {
-		LOGGER.error(exception);
+		LOGGER.debug(exception.getMessage());
 		return new Response(false, exception.getMessage());
 
 	}

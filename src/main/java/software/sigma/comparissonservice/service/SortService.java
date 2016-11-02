@@ -14,6 +14,14 @@ public interface SortService {
 	 */
 	boolean validateInputData(InputData inputData);
 
+	/**
+	 * Sort input data.
+	 * 
+	 * @param inputData
+	 *            object with input data for sort and sort order
+	 * @throws ApplicationException
+	 *             if smth happened
+	 */
 	void sort(InputData inputData) throws ApplicationException;
 
 }

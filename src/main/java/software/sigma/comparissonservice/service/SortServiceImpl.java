@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
-import software.sigma.comparissonservice.constants.ErrorConstants;
 import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 import software.sigma.comparissonservice.protocol.InputData;
@@ -34,6 +33,10 @@ public class SortServiceImpl implements SortService {
 	 * Logger.
 	 */
 	private static final Logger LOGGER = Logger.getLogger(SortServiceImpl.class);
+	/**
+	 * Message than there is no schema for validating of current data.
+	 */
+	private static final String ERR_MESSAGE_NO_VALID_SCHEMA_FOR_DATA = "Valid XSD schema not found for input data";
 
 	/**
 	 * Validate content of XML, trying to find according to XSD configuration.
@@ -94,7 +97,7 @@ public class SortServiceImpl implements SortService {
 		boolean isValidDataForSort = validateInputData(inputData);
 
 		if (!isValidDataForSort) {
-			throw new ApplicationException(ErrorConstants.ERR_NO_VALID_SCHEMA_FOR_DATA.getValue());
+			throw new ApplicationException(ERR_MESSAGE_NO_VALID_SCHEMA_FOR_DATA);
 		}
 	}
 

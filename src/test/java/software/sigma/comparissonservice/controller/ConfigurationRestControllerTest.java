@@ -75,7 +75,7 @@ public class ConfigurationRestControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testGetAllShouldReturnFoundedEntities() throws Exception {
+	public void testGetAllShouldReturnFoundEntities() throws Exception {
 		String configNameXpath = "configurations/configuration[%s]/name";
 		String configIdXpath = "configurations/configuration[%s]/id";
 
