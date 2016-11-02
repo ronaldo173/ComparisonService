@@ -6,7 +6,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -41,7 +40,7 @@ public class ConfigurationServiceImplTest {
 
 	@Test
 	public void testGetByIdShouldReturnFoundedEntity() {
-		Configuration configInDao = getConfigsList().get(0);
+		Configuration configInDao = TestUtils.getConfigsList().get(0);
 		int idForTest = configInDao.getId();
 		when(daoMocked.getById(idForTest)).thenReturn(configInDao);
 
@@ -56,7 +55,7 @@ public class ConfigurationServiceImplTest {
 
 	@Test
 	public void testGetAllShouldReturnListWithEntities() {
-		List<Configuration> listConfigs = getConfigsList();
+		List<Configuration> listConfigs = TestUtils.getConfigsList();
 		when(daoMocked.getAll()).thenReturn(listConfigs);
 
 		List<ConfigurationProtocol> configsFromService = configService.getAll();
@@ -69,23 +68,6 @@ public class ConfigurationServiceImplTest {
 			Assert.assertTrue(
 					TestUtils.isConfigurationAndDtoConfigEquals(listConfigs.get(i), configsFromService.get(i)));
 		}
-	}
-
-	/**
-	 * Get list with configurations.
-	 * 
-	 * @return list with objects
-	 */
-	private List<Configuration> getConfigsList() {
-		Configuration config1 = new Configuration();
-		config1.setId(1);
-		config1.setName("name1");
-		config1.setConfigContent("content1");
-		Configuration config2 = new Configuration();
-		config2.setId(2);
-		config2.setName("name2");
-		config2.setConfigContent("content2");
-		return Arrays.asList(config1, config2);
 	}
 
 	@Test

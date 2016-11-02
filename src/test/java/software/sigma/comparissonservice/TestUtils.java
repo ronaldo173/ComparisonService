@@ -1,6 +1,12 @@
 package software.sigma.comparissonservice;
 
+import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -43,6 +49,52 @@ public final class TestUtils {
 		ConfigurationProtocol configConvertedToProtocol = ConfigurationsConverter.convert(configuration);
 
 		return configConvertedToProtocol.equals(configurationProtocol);
-
 	}
+
+	/**
+	 * Get list with {@link ConfigurationProtocol} objects.
+	 * 
+	 * @return list with objects
+	 */
+	public static List<ConfigurationProtocol> getConfigProtocolsList() {
+		ConfigurationProtocol configFirst = new ConfigurationProtocol();
+		configFirst.setId(1);
+		configFirst.setName("Mock config 1");
+		configFirst.setConfigContent("<?xml version=\"1.0\"?><xs:schema></xs:schema>");
+
+		ConfigurationProtocol configSecond = new ConfigurationProtocol();
+		configSecond.setId(2);
+		configSecond.setName("Mock config 2");
+		configSecond.setConfigContent("<?xml version=\"1.0\"?><xs:schema>SCHEMA2</xs:schema>");
+		return Arrays.asList(configFirst, configSecond);
+	}
+
+	/**
+	 * Get list with configurations.
+	 * 
+	 * @return list with objects
+	 */
+	public static List<Configuration> getConfigsList() {
+		Configuration config1 = new Configuration();
+		config1.setId(1);
+		config1.setName("name1");
+		config1.setConfigContent("content1");
+		Configuration config2 = new Configuration();
+		config2.setId(2);
+		config2.setName("name2");
+		config2.setConfigContent("content2");
+		return Arrays.asList(config1, config2);
+	}
+
+	public static String readFile(String path) throws IOException {
+		// if path containg at start '/' - delete first /
+		if (path.startsWith("/")) {
+			path = path.substring(1);
+		}
+
+		Charset encoding = Charset.forName("UTF-8");
+		byte[] encoded = Files.readAllBytes(Paths.get(path));
+		return new String(encoded, encoding);
+	}
+
 }

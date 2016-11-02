@@ -11,7 +11,7 @@ public enum ErrorConstants {
 	 * Constants with error messages inside. Message can be retrieved with
 	 * getter.
 	 */
-	ERR_SHOULD_BE_TYPE(" should be of type "), ERR_NOT_VALID_CONFIG_CONTENT("Configuration content(xsd schema) is not valid");
+	ERR_SHOULD_BE_TYPE(" should be of type "), ERR_NOT_VALID_CONFIG_CONTENT("Configuration content(xsd schema) is not valid"), ERR_NO_VALID_SCHEMA_FOR_DATA("Valid XSD schema not found for input data");
 
 	/**
 	 * Message for retrieving.

@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -80,7 +79,7 @@ public class ConfigurationRestControllerTest {
 		String configNameXpath = "configurations/configuration[%s]/name";
 		String configIdXpath = "configurations/configuration[%s]/id";
 
-		List<ConfigurationProtocol> listConfigs = getConfigsList();
+		List<ConfigurationProtocol> listConfigs = TestUtils.getConfigProtocolsList();
 		when(configServiceMock.getAll()).thenReturn(listConfigs);
 
 		mockMvc.perform(get(URL_PREFIX + "configuration/").accept(MediaType.APPLICATION_XML))
@@ -99,7 +98,7 @@ public class ConfigurationRestControllerTest {
 		String configIdXpath = "configuration[%s]/id";
 		int idOfConfig = 1;
 
-		ConfigurationProtocol configuration = getConfigsList().get(0);
+		ConfigurationProtocol configuration = TestUtils.getConfigProtocolsList().get(0);
 		when(configServiceMock.getById(idOfConfig)).thenReturn(configuration);
 
 		mockMvc.perform(get(URL_PREFIX + "configuration/" + idOfConfig).accept(MediaType.APPLICATION_XML))
@@ -162,7 +161,7 @@ public class ConfigurationRestControllerTest {
 	public void testSaveEntityShouldReturnSuccessResponse() throws Exception {
 		String responseXpath = "response/isSuccess";
 
-		ConfigurationProtocol configurationProtocol = getConfigsList().get(0);
+		ConfigurationProtocol configurationProtocol = TestUtils.getConfigProtocolsList().get(0);
 		byte[] contentForTest = TestUtils.convertToXml(configurationProtocol).getBytes(Charset.forName("UTF-8"));
 
 		when(configServiceMock.save(configurationProtocol)).thenReturn(true);
@@ -174,29 +173,11 @@ public class ConfigurationRestControllerTest {
 		verifyNoMoreInteractions(configServiceMock);
 	}
 
-	/**
-	 * Get list with {@link ConfigurationProtocol} objects.
-	 * 
-	 * @return list with objects
-	 */
-	private List<ConfigurationProtocol> getConfigsList() {
-		ConfigurationProtocol configFirst = new ConfigurationProtocol();
-		configFirst.setId(1);
-		configFirst.setName("Mock config 1");
-		configFirst.setConfigContent("<?xml version=\"1.0\"?><xs:schema></xs:schema>");
-
-		ConfigurationProtocol configSecond = new ConfigurationProtocol();
-		configSecond.setId(2);
-		configSecond.setName("Mock config 2");
-		configSecond.setConfigContent("<?xml version=\"1.0\"?><xs:schema>SCHEMA2</xs:schema>");
-		return Arrays.asList(configFirst, configSecond);
-	}
-
 	@Test
 	public void testUpdateEntityShouldReturnSuccessResponse() throws Exception {
 		String responseXpath = "response/isSuccess";
 
-		ConfigurationProtocol configurationProtocol = getConfigsList().get(0);
+		ConfigurationProtocol configurationProtocol = TestUtils.getConfigProtocolsList().get(0);
 		configurationProtocol.setId(1);
 		byte[] contentForTest = TestUtils.convertToXml(configurationProtocol).getBytes(Charset.forName("UTF-8"));
 
@@ -215,7 +196,7 @@ public class ConfigurationRestControllerTest {
 	public void testUpdateEntityShouldReturnErrorResponse() throws Exception {
 		String responseXpath = "response/isSuccess";
 
-		ConfigurationProtocol configurationProtocol = getConfigsList().get(0);
+		ConfigurationProtocol configurationProtocol = TestUtils.getConfigProtocolsList().get(0);
 		configurationProtocol.setId(1);
 		byte[] contentForTest = TestUtils.convertToXml(configurationProtocol).getBytes(Charset.forName("UTF-8"));
 

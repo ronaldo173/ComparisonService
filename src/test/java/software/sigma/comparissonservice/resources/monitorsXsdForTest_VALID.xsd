@@ -1,0 +1,24 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="monitors" />
+	<xs:element name="monitor">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="model" type="xs:string" />
+				<xs:element name="diagonal" type="xs:decimal" />
+				<xs:element name="brightness" type="xs:decimal" />
+				<xs:element name="resolution">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="1920x1080" />
+							<xs:enumeration value="2560x1080" />
+							<xs:enumeration value="1600x1900" />
+							<xs:enumeration value="1366x768" />
+							<xs:enumeration value="1280x1024" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="price" type="xs:decimal" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

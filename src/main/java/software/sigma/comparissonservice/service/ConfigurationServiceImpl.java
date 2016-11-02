@@ -92,7 +92,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 		SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		try {
-			factory.newSchema(new StreamSource(new StringReader(configContent)));
+			factory.newSchema(new StreamSource(new StringReader(configContent.trim())));
 		} catch (SAXException e) {
 			isValid = false;
 		}

@@ -26,6 +26,7 @@ import software.sigma.comparissonservice.service.ConfigurationService;
  * @author alexandr.efimov
  *
  */
+
 @RestController
 public final class ConfigurationRestController {
 
@@ -132,4 +133,5 @@ public final class ConfigurationRestController {
 		LOGGER.debug("Object deleted success: " + successSave);
 		return response;
 	}
+
 }
