@@ -30,6 +30,13 @@
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 		</plugins>
@@ -73,7 +80,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			</dependency>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.eclipse.persistence/org.eclipse.persistence.moxy -->
 		<dependency>

@@ -1,10 +1,6 @@
 package software.sigma.comparissonservice;
 
-import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -84,17 +80,6 @@ public final class TestUtils {
 		config2.setName("name2");
 		config2.setConfigContent("content2");
 		return Arrays.asList(config1, config2);
-	}
-
-	public static String readFile(String path) throws IOException {
-		// if path containg at start '/' - delete first /
-		if (path.startsWith("/")) {
-			path = path.substring(1);
-		}
-
-		Charset encoding = Charset.forName("UTF-8");
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-		return new String(encoded, encoding);
 	}
 
 }

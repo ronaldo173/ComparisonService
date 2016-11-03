@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<order>
+	<field name="diagonal" ordering="asc" />
+	<field name="price" ordering="desc" />
+	<field name="resolution" />
+</order>

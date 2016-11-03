@@ -11,8 +11,10 @@ public interface SortService {
 	 * @param inputData
 	 *            object with input data
 	 * @return true if all is valid
+	 * @throws ApplicationException
+	 *             if smth not valid/some problem found, description in message
 	 */
-	boolean validateInputData(InputData inputData);
+	boolean validateInputData(InputData inputData) throws ApplicationException;
 
 	/**
 	 * Sort input data.
