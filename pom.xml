@@ -96,6 +96,12 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
 
+		<!-- https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink -->
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>2.6.3</version>
+		</dependency>
 
 	</dependencies>
 </project>

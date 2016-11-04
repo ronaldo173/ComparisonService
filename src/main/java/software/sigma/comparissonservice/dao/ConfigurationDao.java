@@ -27,7 +27,7 @@ public interface ConfigurationDao {
 	 * 
 	 * @param id
 	 *            is id of object
-	 * @return object of type {@link T}
+	 * @return found object by id or null if not exist with id
 	 */
 	Configuration getById(int id);
 
@@ -55,5 +55,14 @@ public interface ConfigurationDao {
 	 * @return true if successful
 	 */
 	boolean delete(int id);
+
+	/**
+	 * Get configuration by it's name.
+	 * 
+	 * @param name
+	 *            is name of config
+	 * @return found object by name or null if not exist with id
+	 */
+	Configuration getByName(String name);
 
 }

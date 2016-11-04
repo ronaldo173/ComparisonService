@@ -131,14 +131,14 @@ public class ConfigurationRestControllerTest {
 	 * 
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetConfigByIdNotExistingIdShouldReturnErrorResponse() throws Exception {
-		String emptyConfigXpath = "configuration";
+		String errorSuccessPath = "response/isSuccess";
 
-		when(configServiceMock.getById(1)).thenReturn(new ConfigurationProtocol());
+		when(configServiceMock.getById(1)).thenThrow(ApplicationException.class);
 		mockMvc.perform(get(URL_PREFIX + "configuration/1").accept(MediaType.APPLICATION_XML))
-				.andDo(MockMvcResultHandlers.print()).andExpect(xpath(emptyConfigXpath).exists())
-				.andExpect(xpath(emptyConfigXpath).nodeCount(1));
+				.andDo(MockMvcResultHandlers.print()).andExpect(xpath(errorSuccessPath).booleanValue(false));
 
 		verify(configServiceMock, times(1)).getById(1);
 		verifyNoMoreInteractions(configServiceMock);

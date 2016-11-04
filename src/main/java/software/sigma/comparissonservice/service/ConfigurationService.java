@@ -26,8 +26,21 @@ public interface ConfigurationService {
 	 * @param id
 	 *            is id of configuration
 	 * @return configuration
+	 * @throws ApplicationException
+	 *             if can't get with reason in message
 	 */
-	ConfigurationProtocol getById(int id);
+	ConfigurationProtocol getById(int id) throws ApplicationException;
+
+	/**
+	 * Get configuration by it's name.
+	 * 
+	 * @param name
+	 *            is name of configuration
+	 * @return configuration
+	 * @throws ApplicationException
+	 *             if can't get with reason in message
+	 */
+	ConfigurationProtocol getByName(String name) throws ApplicationException;
 
 	/**
 	 * Save configuration to storage.

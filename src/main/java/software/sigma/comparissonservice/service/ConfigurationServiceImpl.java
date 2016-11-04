@@ -29,6 +29,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	private static final String ERR_MESSAGE_NOT_VALID_CONFIG_CONTENT = "Configuration content(xsd schema) is not valid";
 
+	private static final String ERR_MESSAGE_NOT_FOUND_CONFIG_BY_ID = "Configuration with your id not exists! Id: ";
+
+	private static final String ERR_MESSAGE_NOT_FOUND_CONFIG_BY_NAME = "Configuration with your name not exists! Name: ";
+
 	@Autowired
 	private ConfigurationDao dao;
 
@@ -43,8 +47,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public ConfigurationProtocol getById(final int id) {
+	public ConfigurationProtocol getById(final int id) throws ApplicationException {
 		Configuration configById = dao.getById(id);
+		if (configById == null) {
+			throw new ApplicationException(ERR_MESSAGE_NOT_FOUND_CONFIG_BY_ID + id);
+		}
 		return ConfigurationsConverter.convert(configById);
 	}
 
@@ -110,6 +117,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		}
 
 		return deleteSuccess;
+	}
+
+	@Override
+	public ConfigurationProtocol getByName(final String name) throws ApplicationException {
+
+		Configuration configByName;
+		try {
+			configByName = dao.getByName(name);
+		} catch (Throwable e) {
+			throw new ApplicationException(ERR_MESSAGE_NOT_FOUND_CONFIG_BY_NAME + name, e);
+		}
+
+		return ConfigurationsConverter.convert(configByName);
 	}
 
 }

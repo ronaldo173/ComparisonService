@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.persistence.oxm.annotations.XmlCDATA;
+import org.eclipse.persistence.oxm.annotations.XmlPath;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @XmlRootElement(name = "input")
@@ -18,6 +19,9 @@ public class InputData {
 	@NotEmpty
 	@XmlCDATA
 	private String sortOrder;
+
+	@XmlPath("dataForSort/@configName")
+	private String configName;
 
 	public String getDataForSort() {
 		return dataForSort;
@@ -35,9 +39,18 @@ public class InputData {
 		this.sortOrder = sortOrder;
 	}
 
+	public String getConfigName() {
+		return configName;
+	}
+
+	public void setConfigName(String configName) {
+		this.configName = configName;
+	}
+
 	@Override
 	public String toString() {
-		return "InputData [dataForSort=" + dataForSort + ", sortOrder=" + sortOrder + "]";
+		return "InputData [dataForSort=" + dataForSort + ", sortOrder=" + sortOrder + ", configName=" + configName
+				+ "]";
 	}
 
 }

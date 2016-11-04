@@ -1,6 +1,7 @@
 package software.sigma.comparissonservice.controller;
 
 import org.apache.log4j.Logger;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -35,6 +36,15 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 	public Response handlePersistException(final ApplicationException exception) {
 		LOGGER.debug(exception.getMessage());
 		return new Response(false, exception.getMessage());
+
+	}
+
+	@ExceptionHandler(DuplicateKeyException.class)
+	@ResponseBody
+	public Response handlePersistDaoExceptionDublicateKey(final DuplicateKeyException exception) {
+		LOGGER.debug(exception.getMessage());
+		String message = exception.getMostSpecificCause().getMessage();
+		return new Response(false, message);
 
 	}
 

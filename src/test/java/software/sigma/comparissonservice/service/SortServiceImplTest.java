@@ -58,7 +58,9 @@ public class SortServiceImplTest {
 			when(configService.getById(config.getId())).thenReturn(config);
 		}
 
-		Assert.assertTrue(sortService.validateXmlContentForSort(xmlContentCorrectForCheck));
+		InputData inputData = new InputData();
+		inputData.setDataForSort(xmlContentCorrectForCheck);
+		Assert.assertTrue(sortService.validateXmlContentForSort(inputData));
 	}
 
 	@Test
@@ -75,7 +77,9 @@ public class SortServiceImplTest {
 			when(configService.getById(config.getId())).thenReturn(config);
 		}
 
-		Assert.assertFalse(sortService.validateXmlContentForSort(xmlContentCorrectForCheck));
+		InputData inputData = new InputData();
+		inputData.setDataForSort(xmlContentCorrectForCheck);
+		Assert.assertFalse(sortService.validateXmlContentForSort(inputData));
 	}
 
 	@Test

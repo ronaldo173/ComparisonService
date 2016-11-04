@@ -67,9 +67,11 @@ public final class ConfigurationRestController {
 	 * @param id
 	 *            is id of configuration
 	 * @return {@link Configuration} object with id like parameter
+	 * @throws ApplicationException
+	 *             if can't get config
 	 */
 	@RequestMapping(path = "/configuration/{id}", produces = MediaType.APPLICATION_XML_VALUE)
-	public ConfigurationProtocol getConfiguration(@PathVariable("id") final Integer id) {
+	public ConfigurationProtocol getConfiguration(@PathVariable("id") final Integer id) throws ApplicationException {
 		LOGGER.debug("/configuration/{id} get config by id -->" + id);
 		return configService.getById(id);
 	}

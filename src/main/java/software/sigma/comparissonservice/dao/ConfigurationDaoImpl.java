@@ -62,6 +62,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 	private static final String SQL_SELECT_ID_OF_CONFIG_SCHEMA_WHERE_ID = "SELECT id_schema FROM configuration where id = ";
 	private static final String SQL_DELETE_CONFIG_CONTENT = "DELETE FROM configuration_schema WHERE id = ?;";
 	private static final String SQL_DELETE_CONFIG_INFO = "DELETE FROM configuration WHERE id = ?;";
+	private static final String SQL_SELECT_ID_OF_CONFIG_WHERE_NAME = "SELECT id FROM configuration where name= ?";
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -93,8 +94,6 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 				});
 		if (listConfigs.size() == 1) {
 			configuration = listConfigs.get(0);
-		} else {
-			configuration = new Configuration();
 		}
 		return configuration;
 	}
@@ -160,6 +159,12 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 		int deleteConfigContentRowsAffected = jdbcTemplate.update(SQL_DELETE_CONFIG_CONTENT, idOfSchema);
 		jdbcTemplate.update(SQL_DELETE_CONFIG_INFO, id);
 		return deleteConfigContentRowsAffected == 1;
+	}
+
+	@Override
+	public Configuration getByName(String name) {
+		final int id = jdbcTemplate.queryForObject(SQL_SELECT_ID_OF_CONFIG_WHERE_NAME, Integer.class, name);
+		return getById(id);
 	}
 
 }

@@ -39,7 +39,7 @@ public class ConfigurationServiceImplTest {
 	}
 
 	@Test
-	public void testGetByIdShouldReturnFoundEntity() {
+	public void testGetByIdShouldReturnFoundEntity() throws ApplicationException {
 		Configuration configInDao = TestUtils.getConfigsList().get(0);
 		int idForTest = configInDao.getId();
 		when(daoMocked.getById(idForTest)).thenReturn(configInDao);
@@ -140,6 +140,31 @@ public class ConfigurationServiceImplTest {
 		configProtocol.setConfigContent(configContent);
 
 		configService.save(configProtocol);
+	}
+
+	@Test
+	public void testGetByNameShouldReturnFoundEntity() throws ApplicationException {
+		Configuration config = TestUtils.getConfigsList().get(0);
+		String nameForTest = config.getName();
+		when(daoMocked.getByName(nameForTest)).thenReturn(config);
+
+		ConfigurationProtocol configFromService = configService.getByName(nameForTest);
+		verify(daoMocked, times(1)).getByName(nameForTest);
+		verifyNoMoreInteractions(daoMocked);
+
+		Assert.assertNotNull(configFromService);
+		Assert.assertTrue(TestUtils.isConfigurationAndDtoConfigEquals(config, configFromService));
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test(expected = ApplicationException.class)
+	public void testGetByNameShouldThrowErrorWhenNotFound() throws ApplicationException {
+		Configuration config = TestUtils.getConfigsList().get(0);
+		String nameForTest = config.getName();
+		when(daoMocked.getByName(nameForTest)).thenThrow(Throwable.class);
+
+		configService.getByName(nameForTest);
 	}
 
 }

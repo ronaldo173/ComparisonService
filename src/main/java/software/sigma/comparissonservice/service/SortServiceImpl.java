@@ -52,25 +52,45 @@ public class SortServiceImpl implements SortService {
 	private static final String ERR_MESSAGE_NOT_VALID_SORT_ORDER = "Sort order isn't valid!";
 
 	/**
-	 * Validate content of XML, trying to find according to XSD configuration.
+	 * Validate content of XML, trying to find according to XSD configuration if
+	 * {@link inputData} param not contain name of configuration with schema,
+	 * else validate according to schema by schema name.
 	 * 
-	 * @param xmlForCheck
-	 *            is string with content of XML file for validation
+	 * @param inputData
+	 *            is object with input data
 	 * @return true if success
 	 */
-	final boolean validateXmlContentForSort(final String xmlForCheck) {
+	final boolean validateXmlContentForSort(final InputData inputData) {
 		LOGGER.debug("Validate input data with objects to xsd.");
 		boolean isValid = false;
+		String dataForValidation = inputData.getDataForSort().trim();
 
-		List<ConfigurationProtocol> allConfigsIdentifiers = configService.getAll();
-		for (ConfigurationProtocol configurationProtocol : allConfigsIdentifiers) {
-			ConfigurationProtocol configById = configService.getById(configurationProtocol.getId());
-			isValid = isValidToConfig(xmlForCheck, configById.getConfigContent());
+		LOGGER.debug("Try to find config by name, NAME --> " + inputData.getConfigName());
+		if (inputData.getConfigName() != null) {
+			ConfigurationProtocol configByName;
+			try {
+				configByName = configService.getByName(inputData.getConfigName());
+				isValid = isValidToConfig(dataForValidation, configByName.getConfigContent());
+			} catch (ApplicationException e) {
+				LOGGER.debug("Can't get from service config by name, " + e.getMessage());
+			}
 
-			if (isValid) {
-				LOGGER.debug(
-						"Validation xml to xsd success, config: " + configById.getId() + ", " + configById.getName());
-				break;
+		} else {
+			List<ConfigurationProtocol> allConfigsIdentifiers = configService.getAll();
+			for (ConfigurationProtocol configurationProtocol : allConfigsIdentifiers) {
+				ConfigurationProtocol configById = null;
+				try {
+					configById = configService.getById(configurationProtocol.getId());
+				} catch (ApplicationException e) {
+					continue;
+				}
+				isValid = isValidToConfig(dataForValidation, configById.getConfigContent());
+
+				if (isValid) {
+					LOGGER.debug("Validation xml to xsd success, config: " + configById.getId() + ", "
+							+ configById.getName());
+					break;
+				}
 			}
 		}
 		return isValid;
@@ -130,14 +150,18 @@ public class SortServiceImpl implements SortService {
 	@Override
 	public void sort(final InputData inputData) throws ApplicationException {
 
-		validateInputData(inputData);
+		boolean isValid = validateInputData(inputData);
 		// TODO implement converting to objects, sorting
+		// TODO temp exception - for showing success validation and that sort
+		if (isValid) {
+			throw new ApplicationException("Validation passed SUCCESSFUL, but ranging feature isn't implemented yet");
+		}
 
 	}
 
 	@Override
 	public boolean validateInputData(final InputData inputData) throws ApplicationException {
-		boolean isValidDataForSort = validateXmlContentForSort(inputData.getDataForSort().trim());
+		boolean isValidDataForSort = validateXmlContentForSort(inputData);
 		boolean isValidSortOrderToSchema = validateXmlSortOrderToSchema(inputData.getSortOrder().trim());
 
 		if (!isValidDataForSort) {
