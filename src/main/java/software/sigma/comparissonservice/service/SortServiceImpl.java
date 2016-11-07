@@ -190,6 +190,7 @@ public class SortServiceImpl implements SortService {
 		if (isValid) {
 			Map<String, String> mapOrderNamesOrdering = getOrderingsFromXml(inputData.getSortOrder());
 			LOGGER.debug("Sort order parsed to: " + mapOrderNamesOrdering.entrySet());
+
 		}
 
 		response.setSuccess(isValid);
@@ -207,7 +208,7 @@ public class SortServiceImpl implements SortService {
 	 * @throws ApplicationException
 	 *             if can't parse
 	 */
-	private Map<String, String> getOrderingsFromXml(String sortOrder) throws ApplicationException {
+	final Map<String, String> getOrderingsFromXml(String sortOrder) throws ApplicationException {
 		Map<String, String> map = new LinkedHashMap<>();
 		sortOrder = sortOrder.trim();
 
@@ -239,7 +240,7 @@ public class SortServiceImpl implements SortService {
 
 		} catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException e) {
 			String errorMessage = "Can't parse sort order";
-			throw new ApplicationException(errorMessage, e);
+			throw new ApplicationException(errorMessage + ", " + e.getMessage(), e);
 		}
 
 		return map;
@@ -256,12 +257,6 @@ public class SortServiceImpl implements SortService {
 		boolean isValidDataForSort = validateXmlContentForSort(inputData, response);
 		boolean isValidSortOrderToSchema = validateXmlSortOrderToSchema(inputData.getSortOrder().trim(), response);
 
-		// if (!isValidDataForSort) {
-		// throw new ApplicationException(ERR_MESSAGE_NO_VALID_SCHEMA_FOR_DATA);
-		// }
-		// if (!isValidSortOrderToSchema) {
-		// throw new ApplicationException(ERR_MESSAGE_NOT_VALID_SORT_ORDER);
-		// }
 		return isValidDataForSort && isValidSortOrderToSchema;
 	}
 

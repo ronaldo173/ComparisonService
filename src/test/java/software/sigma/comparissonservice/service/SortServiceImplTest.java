@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -119,28 +121,37 @@ public class SortServiceImplTest {
 		Assert.assertFalse(isValid);
 	}
 
-	@Test(expected = ApplicationException.class)
-	public void testValidateInputDataShouldBeException() throws ApplicationException {
+	@Test
+	public void testValidateInputDataShouldBeNotSuccess() throws ApplicationException {
 
 		InputData inputData = new InputData();
 		inputData.setDataForSort("wrong");
 		inputData.setSortOrder("wrong");
-		sortService.validateInputData(inputData, new Response());
+		boolean validateInputData = sortService.validateInputData(inputData, responseMock);
+
+		Assert.assertFalse(validateInputData);
 	}
 
-	public void testValidateInputDataShouldBeSuccess() throws ApplicationException {
-
+	@Test
+	public void testGetOrderingsFromXml() throws ApplicationException {
 		URL urlFileXmlOrder = getClass()
-				.getResource("/software/sigma/comparissonservice/resources/sortOrderMonitors_VALID.xml");
-		URL urlFileXmlSortObjects = getClass()
-				.getResource("/software/sigma/comparissonservice/resources/monitorsXmlForTest_VALID.xml");
+				.getResource("/software/sigma/comparissonservice/resources/sortOrder_NOTVALID.xml");
+		String xmlContentSortOrder = CommonUtils.readFileToString(urlFileXmlOrder.getFile());
 
-		InputData inputData = new InputData();
-		inputData.setDataForSort(CommonUtils.readFileToString(urlFileXmlSortObjects.getFile()));
-		inputData.setSortOrder(CommonUtils.readFileToString(urlFileXmlOrder.getFile()));
-		boolean isValid = sortService.validateInputData(inputData, new Response());
+		Map<String, String> mapOrder = sortService.getOrderingsFromXml(xmlContentSortOrder);
+		System.out.println(mapOrder.entrySet());
 
-		Assert.assertTrue(isValid);
+		Assert.assertNotNull(mapOrder);
+		Assert.assertTrue(!mapOrder.isEmpty());
+
+		for (Entry<String, String> entry : mapOrder.entrySet()) {
+			Assert.assertNotNull(entry.getKey());
+		}
+	}
+
+	@Test(expected = ApplicationException.class)
+	public void testGetOrderingsFromXmlShouldBeExceptionWrongData() throws ApplicationException {
+		sortService.getOrderingsFromXml("123456");
 	}
 
 }
