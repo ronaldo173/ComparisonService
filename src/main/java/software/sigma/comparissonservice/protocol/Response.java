@@ -27,6 +27,8 @@ public class Response {
 	 */
 	private List<String> errors;
 
+	private List<String> informationMessages;
+
 	public Response() {
 		errors = new ArrayList<>();
 	}
@@ -57,9 +59,18 @@ public class Response {
 		this.errors = errors;
 	}
 
+	public List<String> getInformationMessages() {
+		return informationMessages;
+	}
+
+	public void setInformationMessages(List<String> informationMessages) {
+		this.informationMessages = informationMessages;
+	}
+
 	@Override
 	public String toString() {
-		return "SimpleError [isSuccess=" + isSuccess + ", errors=" + errors + "]";
+		return "Response [isSuccess=" + isSuccess + ", errors=" + errors + ", informationMessages="
+				+ informationMessages + "]";
 	}
 
 }

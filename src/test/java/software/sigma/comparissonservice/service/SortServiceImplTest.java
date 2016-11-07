@@ -16,6 +16,7 @@ import software.sigma.comparissonservice.TestUtils;
 import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 import software.sigma.comparissonservice.protocol.InputData;
+import software.sigma.comparissonservice.protocol.Response;
 import software.sigma.comparissonservice.utils.CommonUtils;
 
 /**
@@ -28,12 +29,17 @@ public class SortServiceImplTest {
 
 	private ConfigurationService configService;
 	private SortServiceImpl sortService;
+	private Response responseMock;
 
+	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() {
 		configService = Mockito.mock(ConfigurationService.class);
 		sortService = new SortServiceImpl();
 		sortService.setConfigService(configService);
+
+		responseMock = Mockito.mock(Response.class);
+		responseMock.setInformationMessages(Mockito.mock(ArrayList.class));
 	}
 
 	@Test
@@ -60,7 +66,7 @@ public class SortServiceImplTest {
 
 		InputData inputData = new InputData();
 		inputData.setDataForSort(xmlContentCorrectForCheck);
-		Assert.assertTrue(sortService.validateXmlContentForSort(inputData));
+		Assert.assertTrue(sortService.validateXmlContentForSort(inputData, responseMock));
 	}
 
 	@Test
@@ -79,7 +85,7 @@ public class SortServiceImplTest {
 
 		InputData inputData = new InputData();
 		inputData.setDataForSort(xmlContentCorrectForCheck);
-		Assert.assertFalse(sortService.validateXmlContentForSort(inputData));
+		Assert.assertFalse(sortService.validateXmlContentForSort(inputData, responseMock));
 	}
 
 	@Test
@@ -89,15 +95,15 @@ public class SortServiceImplTest {
 				.getResource("/software/sigma/comparissonservice/resources/sortOrderMonitors_VALID.xml");
 		String xmlContentSortOrder = CommonUtils.readFileToString(urlFileXmlOrder.getFile());
 
-		boolean isValid = sortService.validateXmlSortOrderToSchema(xmlContentSortOrder);
+		boolean isValid = sortService.validateXmlSortOrderToSchema(xmlContentSortOrder, responseMock);
 		Assert.assertTrue(isValid);
 	}
 
 	@Test
 	public void testValidateSortOrderShouldBeNotSuccessIfPassNullOrEmpty() {
 
-		boolean isValidNullArg = sortService.validateXmlSortOrderToSchema(null);
-		boolean isValidEmptyArg = sortService.validateXmlSortOrderToSchema("");
+		boolean isValidNullArg = sortService.validateXmlSortOrderToSchema(null, responseMock);
+		boolean isValidEmptyArg = sortService.validateXmlSortOrderToSchema("", responseMock);
 		Assert.assertFalse(isValidNullArg);
 		Assert.assertFalse(isValidEmptyArg);
 	}
@@ -109,7 +115,7 @@ public class SortServiceImplTest {
 				.getResource("/software/sigma/comparissonservice/resources/sortOrder_NOTVALID.xml");
 		String xmlContentSortOrder = CommonUtils.readFileToString(urlFileXmlOrder.getFile());
 
-		boolean isValid = sortService.validateXmlSortOrderToSchema(xmlContentSortOrder);
+		boolean isValid = sortService.validateXmlSortOrderToSchema(xmlContentSortOrder, responseMock);
 		Assert.assertFalse(isValid);
 	}
 
@@ -119,7 +125,7 @@ public class SortServiceImplTest {
 		InputData inputData = new InputData();
 		inputData.setDataForSort("wrong");
 		inputData.setSortOrder("wrong");
-		sortService.validateInputData(inputData);
+		sortService.validateInputData(inputData, new Response());
 	}
 
 	public void testValidateInputDataShouldBeSuccess() throws ApplicationException {
@@ -132,7 +138,7 @@ public class SortServiceImplTest {
 		InputData inputData = new InputData();
 		inputData.setDataForSort(CommonUtils.readFileToString(urlFileXmlSortObjects.getFile()));
 		inputData.setSortOrder(CommonUtils.readFileToString(urlFileXmlOrder.getFile()));
-		boolean isValid = sortService.validateInputData(inputData);
+		boolean isValid = sortService.validateInputData(inputData, new Response());
 
 		Assert.assertTrue(isValid);
 	}

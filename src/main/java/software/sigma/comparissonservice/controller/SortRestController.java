@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.protocol.InputData;
+import software.sigma.comparissonservice.protocol.Response;
 import software.sigma.comparissonservice.service.SortService;
 
 @RestController
@@ -24,9 +25,9 @@ public class SortRestController {
 	}
 
 	@RequestMapping(path = "/sort", method = RequestMethod.POST, produces = MediaType.APPLICATION_XML_VALUE)
-	public String sortData(@Valid @RequestBody final InputData inputData) throws ApplicationException {
+	public Response sortData(@Valid @RequestBody final InputData inputData) throws ApplicationException {
 
-		sortService.sort(inputData);
-		return inputData.toString();
+		Response sortResponse = sortService.sort(inputData);
+		return sortResponse;
 	}
 }
