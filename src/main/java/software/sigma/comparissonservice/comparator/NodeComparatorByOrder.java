@@ -1,4 +1,4 @@
-package software.sigma.comparissonservice;
+package software.sigma.comparissonservice.comparator;
 
 import java.util.Comparator;
 import java.util.LinkedHashMap;

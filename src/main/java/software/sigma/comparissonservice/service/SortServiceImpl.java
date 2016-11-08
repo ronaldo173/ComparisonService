@@ -41,7 +41,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import software.sigma.comparissonservice.NodeComparatorByOrder;
+import software.sigma.comparissonservice.comparator.NodeComparatorByOrder;
 import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 import software.sigma.comparissonservice.protocol.InputData;
@@ -59,6 +59,7 @@ public class SortServiceImpl implements SortService {
 	private static final String MESSAGE_VALIDATION_DATA_FOR_SORT_SUCCESS = "Validation data for sort success: ";
 	private static final String MESSAGE_VALIDATION_SORT_ORDER_SUCCESS = "Validation sort order success: ";;
 	private static final String ERR_MESSAGE_CANT_GET_CONFIG_BY_NAME = "Can't get from service config by name, ";
+	private static final String ERR_MESSAGE_VALIDATION_SORT_ORDER_TO_DATA_ = "Validation sort order to data for sort - not enough occurances of elements with names as in sort order";
 	private static final String PATH_TO_SORT_ORDER_VALIDATON_SCHEMA_FILE = "SortOrderValidatonSchema.xsd";
 
 	@Autowired
@@ -258,13 +259,13 @@ public class SortServiceImpl implements SortService {
 				Node orderingAttrNode = attributes.getNamedItem(SORT_ORDER_ATTR_ORDERING);
 				String nameAttr = null;
 				String orderingAttr = null;
-				if (nameAttrNode != null) {
-					nameAttr = nameAttrNode.getNodeValue();
-				}
 				if (orderingAttrNode != null) {
 					orderingAttr = orderingAttrNode.getNodeValue();
 				}
-				map.put(nameAttr, orderingAttr);
+				if (nameAttrNode != null) {
+					nameAttr = nameAttrNode.getNodeValue();
+					map.put(nameAttr, orderingAttr);
+				}
 			}
 
 		} catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException e) {
@@ -291,12 +292,19 @@ public class SortServiceImpl implements SortService {
 
 	@Override
 	public Response sort(final InputData inputData) throws ApplicationException {
-
 		Response response = new Response();
 		response.setInformationMessages(new ArrayList<String>());
-		boolean isValid = validateInputData(inputData, response);
 
-		if (isValid) {
+		if (inputData == null || inputData.getDataForSort() == null || inputData.getSortOrder() == null) {
+			response.setSuccess(false);
+			response.getErrors().add("Empty data");
+			return response;
+		}
+
+		boolean isValidToSchemas = validateInputData(inputData, response);
+		boolean isValidDataToOrder = false;
+
+		if (isValidToSchemas) {
 			LinkedHashMap<String, String> mapOrderNamesOrdering = getOrderingsFromXml(inputData.getSortOrder());
 			response.getInformationMessages().add("Sort order: " + mapOrderNamesOrdering.entrySet());
 
@@ -304,15 +312,62 @@ public class SortServiceImpl implements SortService {
 			List<Node> listNodesForSort = getListNodesFromXmlContent(dataForSort);
 			response.getInformationMessages().add("Objects for sort amount: " + listNodesForSort.size());
 
-			Comparator<Node> comparator = getComparatorForNodes(mapOrderNamesOrdering);
-			Collections.sort(listNodesForSort, comparator);
+			isValidDataToOrder = validateXmlSortContentToSortOrder(listNodesForSort, mapOrderNamesOrdering, response);
+			if (isValidDataToOrder) {
+				Comparator<Node> comparator = getComparatorForNodes(mapOrderNamesOrdering);
+				Collections.sort(listNodesForSort, comparator);
 
-			String sortedXmlContent = convertListNodesToStringXml(listNodesForSort);
-			response.setSortedData(sortedXmlContent);
+				String sortedXmlContent = convertListNodesToStringXml(listNodesForSort);
+				response.setSortedData(sortedXmlContent);
+			}
 		}
 
-		response.setSuccess(isValid);
+		boolean succesSorting = isValidToSchemas && isValidDataToOrder;
+		response.setSuccess(succesSorting);
 		return response;
+	}
+
+	/**
+	 * Validate data for sort according to sort order. Validation success if
+	 * data for sort contains at least one element with name equals to field
+	 * name from sort order. If not contain - there is no order to be sorted by.
+	 * 
+	 * @param listNodesForSort
+	 *            is list with nodes for sorting
+	 * @param mapOrderNamesOrdering
+	 *            is map with sort order(field name, type of sorting)
+	 * @param response
+	 *            is object for adding information about success/not validation
+	 * @return true if valid
+	 */
+	private boolean validateXmlSortContentToSortOrder(final List<Node> listNodesForSort,
+			final LinkedHashMap<String, String> mapOrderNamesOrdering, final Response response) {
+		if (listNodesForSort.isEmpty()) {
+			response.getErrors().add("Not enough data for sorting");
+			return false;
+		}
+
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		int counterFieldNamesInDataForSort = 0;
+		try {
+			for (Node node : listNodesForSort) {
+				for (String fieldName : mapOrderNamesOrdering.keySet()) {
+
+					Node nodeByFieldName = (Node) xPath.compile(fieldName).evaluate(node, XPathConstants.NODE);
+					if (nodeByFieldName != null) {
+						counterFieldNamesInDataForSort++;
+					}
+				}
+			}
+		} catch (XPathExpressionException e) {
+			LOGGER.error("Validation SortContentToSortOrder, can't parse", e);
+		}
+
+		boolean isValid = counterFieldNamesInDataForSort != 0;
+		if (!isValid) {
+			response.getErrors().add(ERR_MESSAGE_VALIDATION_SORT_ORDER_TO_DATA_);
+		}
+		return isValid;
 	}
 
 	private String convertListNodesToStringXml(List<Node> listNodesForSort) {

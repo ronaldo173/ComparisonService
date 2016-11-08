@@ -47,24 +47,7 @@ public class SortServiceImplTest {
 	@Test
 	public void testValidateContentForSortShoudBeSuccess() throws ApplicationException, IOException {
 
-		URL urlFileXml = getClass()
-				.getResource("/software/sigma/comparissonservice/resources/monitorsXmlForTest_VALID.xml");
-		URL urlFileXsd = getClass()
-				.getResource("/software/sigma/comparissonservice/resources/monitorsXsdForTest_VALID.xsd");
-		String xmlContentCorrectForCheck = CommonUtils.readFileToString(urlFileXml.getFile());
-		String xsdValidSchemaForXml = CommonUtils.readFileToString(urlFileXsd.getFile());
-
-		List<ConfigurationProtocol> configProtocolsList = new ArrayList<>(TestUtils.getConfigProtocolsList());
-		ConfigurationProtocol correctConfig = new ConfigurationProtocol();
-		correctConfig.setId(configProtocolsList.size() + 1);
-		correctConfig.setName("correctConfig");
-		correctConfig.setConfigContent(xsdValidSchemaForXml);
-		configProtocolsList.add(correctConfig);
-
-		when(configService.getAll()).thenReturn(configProtocolsList);
-		for (ConfigurationProtocol config : configProtocolsList) {
-			when(configService.getById(config.getId())).thenReturn(config);
-		}
+		String xmlContentCorrectForCheck = getValidDataForSortWithMockDao();
 
 		InputData inputData = new InputData();
 		inputData.setDataForSort(xmlContentCorrectForCheck);
@@ -72,7 +55,8 @@ public class SortServiceImplTest {
 	}
 
 	@Test
-	public void testValidateContentForSortShoudBeNotSuccessNotExistsConfig() throws ApplicationException, IOException {
+	public void testValidateContentForSortShoudBeNotSuccessForNotExistingConfig()
+			throws ApplicationException, IOException {
 
 		URL urlFileXml = getClass()
 				.getResource("/software/sigma/comparissonservice/resources/monitorsXmlForTest_VALID.xml");
@@ -139,7 +123,6 @@ public class SortServiceImplTest {
 		String xmlContentSortOrder = CommonUtils.readFileToString(urlFileXmlOrder.getFile());
 
 		Map<String, String> mapOrder = sortService.getOrderingsFromXml(xmlContentSortOrder);
-		System.out.println(mapOrder.entrySet());
 
 		Assert.assertNotNull(mapOrder);
 		Assert.assertTrue(!mapOrder.isEmpty());
@@ -151,7 +134,87 @@ public class SortServiceImplTest {
 
 	@Test(expected = ApplicationException.class)
 	public void testGetOrderingsFromXmlShouldBeExceptionWrongData() throws ApplicationException {
-		sortService.getOrderingsFromXml("123456");
+		sortService.getOrderingsFromXml("1");
+	}
+
+	@Test
+	public void testSortShouldBeNotSuccessNullData() throws ApplicationException {
+		Response responseNullData = sortService.sort(null);
+		InputData inputData = new InputData();
+		Response responseEmptyData = sortService.sort(inputData);
+		inputData.setDataForSort("");
+		Response responseEmptySortOrder = sortService.sort(inputData);
+		inputData.setDataForSort(null);
+		inputData.setSortOrder("order");
+		Response responseEmptySortData = sortService.sort(inputData);
+
+		Assert.assertFalse(responseNullData.isSuccess());
+		Assert.assertFalse(responseEmptyData.isSuccess());
+		Assert.assertFalse(responseEmptySortData.isSuccess());
+		Assert.assertFalse(responseEmptySortOrder.isSuccess());
+	}
+
+	/**
+	 * Get valid content for sort. Use mock dao for validation content according
+	 * to schema.
+	 * 
+	 * @return string with xml content for sort
+	 * @throws ApplicationException
+	 */
+	private String getValidDataForSortWithMockDao() throws ApplicationException {
+		URL urlFileXml = getClass()
+				.getResource("/software/sigma/comparissonservice/resources/monitorsXmlForTest_VALID.xml");
+		URL urlFileXsd = getClass()
+				.getResource("/software/sigma/comparissonservice/resources/monitorsXsdForTest_VALID.xsd");
+		String xmlContentCorrectForCheck = CommonUtils.readFileToString(urlFileXml.getFile());
+		String xsdValidSchemaForXml = CommonUtils.readFileToString(urlFileXsd.getFile());
+
+		List<ConfigurationProtocol> configProtocolsList = new ArrayList<>(TestUtils.getConfigProtocolsList());
+		ConfigurationProtocol correctConfig = new ConfigurationProtocol();
+		correctConfig.setId(configProtocolsList.size() + 1);
+		correctConfig.setName("correctConfig");
+		correctConfig.setConfigContent(xsdValidSchemaForXml);
+		configProtocolsList.add(correctConfig);
+
+		when(configService.getAll()).thenReturn(configProtocolsList);
+		for (ConfigurationProtocol config : configProtocolsList) {
+			when(configService.getById(config.getId())).thenReturn(config);
+		}
+
+		return xmlContentCorrectForCheck;
+
+	}
+
+	@Test
+	public void testSortShouldBeSuccess() throws ApplicationException {
+		URL urlFileSortOrder = getClass()
+				.getResource("/software/sigma/comparissonservice/resources/sortOrderMonitors_VALID.xml");
+		String sortOrder = CommonUtils.readFileToString(urlFileSortOrder.getFile());
+
+		InputData inputData = new InputData();
+		inputData.setSortOrder(sortOrder);
+		inputData.setDataForSort(getValidDataForSortWithMockDao());
+
+		Response response = sortService.sort(inputData);
+
+		Assert.assertTrue(response.isSuccess());
+		Assert.assertNotNull(response.getSortedData());
+	}
+
+	@Test
+	public void testSortShouldBeNotSuccessNotCorrectFieldNames() throws ApplicationException {
+
+		URL urlFileXmlOrder = getClass().getResource(
+				"/software/sigma/comparissonservice/resources/sortOrder_VALID_not_correct_field_names.xml");
+		String xmlContentSortOrder = CommonUtils.readFileToString(urlFileXmlOrder.getFile());
+
+		InputData inputData = new InputData();
+		inputData.setSortOrder(xmlContentSortOrder);
+		inputData.setDataForSort(getValidDataForSortWithMockDao());
+		Response response = sortService.sort(inputData);
+
+		Assert.assertFalse(response.isSuccess());
+		Assert.assertFalse(response.getErrors().isEmpty());
 	}
 
 }
