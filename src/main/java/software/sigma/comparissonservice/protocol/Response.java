@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.eclipse.persistence.oxm.annotations.XmlCDATA;
+
 /**
  * Entity for representing response result.
  * 
@@ -28,6 +30,9 @@ public class Response {
 	private List<String> errors;
 
 	private List<String> informationMessages;
+
+	@XmlCDATA
+	private String sortedData;
 
 	public Response() {
 		errors = new ArrayList<>();
@@ -65,6 +70,14 @@ public class Response {
 
 	public void setInformationMessages(List<String> informationMessages) {
 		this.informationMessages = informationMessages;
+	}
+
+	public String getSortedData() {
+		return sortedData;
+	}
+
+	public void setSortedData(String sortedData) {
+		this.sortedData = sortedData;
 	}
 
 	@Override
