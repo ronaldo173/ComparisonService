@@ -30,12 +30,9 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -46,21 +43,19 @@ import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 import software.sigma.comparissonservice.protocol.InputData;
 import software.sigma.comparissonservice.protocol.Response;
-import software.sigma.comparissonservice.utils.CommonUtils;
+import software.sigma.comparissonservice.protocol.SortOrderField;
+import software.sigma.comparissonservice.protocol.SortOrderFields;
 
 @Service
 public class SortServiceImpl implements SortService {
 
 	private static final Logger LOGGER = Logger.getLogger(SortServiceImpl.class);
 
-	private static final String SORT_ORDER_ATTR_NAME = "name";
-	private static final String SORT_ORDER_ATTR_ORDERING = "ordering";
-	private static final String MESSAGE_FOUND_VALID_CONFIG = "Found valid configuration, name: ";
-	private static final String MESSAGE_VALIDATION_DATA_FOR_SORT_SUCCESS = "Validation data for sort success: ";
-	private static final String MESSAGE_VALIDATION_SORT_ORDER_SUCCESS = "Validation sort order success: ";;
 	private static final String ERR_MESSAGE_CANT_GET_CONFIG_BY_NAME = "Can't get from service config by name, ";
-	private static final String ERR_MESSAGE_VALIDATION_SORT_ORDER_TO_DATA_ = "Validation sort order to data for sort - not enough occurances of elements with names as in sort order";
-	private static final String PATH_TO_SORT_ORDER_VALIDATON_SCHEMA_FILE = "SortOrderValidatonSchema.xsd";
+	private static final String ERR_MESSAGE_VALIDATION_SORT_ORDER_TO_DATA = "Validation sort order to data for sort - not enough occurances of elements with names as in sort order";
+	private static final String ERR_MESSAGE_CANT_FIND_CONFIG_FOR_DATA = "Can't find configuration according to your data for sort";
+	private static final String ERR_MESSAGE_EMPTY_DATA = "Empty data for sort";
+	private static final String ERR_MESSAGE_EMPTY_SORT_ORDER = "Empty sort order";
 
 	@Autowired
 	ConfigurationService configService;
@@ -90,64 +85,39 @@ public class SortServiceImpl implements SortService {
 		boolean isValid = false;
 		String dataForValidation = inputData.getDataForSort().trim();
 
-		LOGGER.debug("Try to find config by name, NAME --> " + inputData.getConfigName());
 		if (inputData.getConfigName() != null) {
+			LOGGER.debug("Try to find config by name, NAME --> " + inputData.getConfigName());
 			ConfigurationProtocol configByName;
 			try {
 				configByName = configService.getByName(inputData.getConfigName());
 				isValid = isValidToConfig(dataForValidation, configByName.getConfigContent());
 			} catch (ApplicationException e) {
-				LOGGER.debug(ERR_MESSAGE_CANT_GET_CONFIG_BY_NAME + e.getMessage(), e);
+				LOGGER.debug("Can't get from service config by name, " + e.getMessage(), e);
 				response.getErrors().add(ERR_MESSAGE_CANT_GET_CONFIG_BY_NAME + e.getMessage());
 			}
 
 		} else {
 			List<ConfigurationProtocol> allConfigsIdentifiers = configService.getAll();
-			for (ConfigurationProtocol configurationProtocol : allConfigsIdentifiers) {
+			for (ConfigurationProtocol configProtocol : allConfigsIdentifiers) {
 				ConfigurationProtocol configById = null;
 				try {
-					configById = configService.getById(configurationProtocol.getId());
+					configById = configService.getById(configProtocol.getId());
 				} catch (ApplicationException e) {
 					continue;
 				}
 				isValid = isValidToConfig(dataForValidation, configById.getConfigContent());
 
 				if (isValid) {
-					LOGGER.debug(MESSAGE_FOUND_VALID_CONFIG + configById.getName());
-					response.getInformationMessages().add(MESSAGE_FOUND_VALID_CONFIG + configById.getName());
+					LOGGER.debug("Found valid configuration, name: " + configById.getName());
 					break;
 				}
 			}
 		}
-		response.getInformationMessages().add(MESSAGE_VALIDATION_DATA_FOR_SORT_SUCCESS + isValid);
-		return isValid;
-	}
-
-	/**
-	 * Validate sort order according to scheme for sort order.
-	 * 
-	 * @param xmlSortOrder
-	 *            is content of sort order
-	 * @param response
-	 *            is object for adding info messages
-	 * @return true if valid
-	 */
-	final boolean validateXmlSortOrderToSchema(final String xmlSortOrder, Response response) {
-
-		LOGGER.debug("Validate sort order to schema");
-		Resource resourceFileSchema = new ClassPathResource(PATH_TO_SORT_ORDER_VALIDATON_SCHEMA_FILE);
-
-		String schemaContentForOrder;
-		try {
-			schemaContentForOrder = CommonUtils.readFileToString(resourceFileSchema.getFile().getPath());
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			return false;
+		if (!isValid) {
+			response.getErrors().add(ERR_MESSAGE_CANT_FIND_CONFIG_FOR_DATA);
+			LOGGER.debug("Valid config not found");
 		}
-
-		boolean isValidToConfig = isValidToConfig(xmlSortOrder, schemaContentForOrder);
-		response.getInformationMessages().add(MESSAGE_VALIDATION_SORT_ORDER_SUCCESS + isValidToConfig);
-		return isValidToConfig;
+		return isValid;
 	}
 
 	/**
@@ -227,90 +197,37 @@ public class SortServiceImpl implements SortService {
 		return list;
 	}
 
-	/**
-	 * Parse sort order from xml to map in format:
-	 * 
-	 * key - name of field value - ordering(asc or desc).
-	 * 
-	 * @param sortOrder
-	 *            is content of XML file with sort order
-	 * @return ordered map with sort order
-	 * @throws ApplicationException
-	 *             if can't parse
-	 */
-	final LinkedHashMap<String, String> getOrderingsFromXml(String sortOrder) throws ApplicationException {
-		LinkedHashMap<String, String> map = new LinkedHashMap<>();
-		sortOrder = sortOrder.trim();
-
-		String expressionOrderField = "/order/field";
-
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = null;
-		try {
-			builder = builderFactory.newDocumentBuilder();
-			Document document = builder.parse(new InputSource(new StringReader(sortOrder)));
-			XPath xPath = XPathFactory.newInstance().newXPath();
-
-			NodeList nodeList = (NodeList) xPath.compile(expressionOrderField).evaluate(document,
-					XPathConstants.NODESET);
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				NamedNodeMap attributes = nodeList.item(i).getAttributes();
-				Node nameAttrNode = attributes.getNamedItem(SORT_ORDER_ATTR_NAME);
-				Node orderingAttrNode = attributes.getNamedItem(SORT_ORDER_ATTR_ORDERING);
-				String nameAttr = null;
-				String orderingAttr = null;
-				if (orderingAttrNode != null) {
-					orderingAttr = orderingAttrNode.getNodeValue();
-				}
-				if (nameAttrNode != null) {
-					nameAttr = nameAttrNode.getNodeValue();
-					map.put(nameAttr, orderingAttr);
-				}
-			}
-
-		} catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException e) {
-			String errorMessage = "Can't parse sort order";
-			throw new ApplicationException(errorMessage + ", " + e.getMessage(), e);
-		}
-		LOGGER.debug("Sort order parsed to: " + map.entrySet());
-		return map;
-	}
-
 	@Override
 	public boolean validateInputData(final InputData inputData, Response response) throws ApplicationException {
-		if (response == null) {
-			response = new Response();
+		String dataForSort = inputData.getDataForSort();
+		if (dataForSort == null || dataForSort.trim().isEmpty()) {
+			response.getErrors().add(ERR_MESSAGE_EMPTY_DATA);
+			return false;
 		}
-		if (response.getInformationMessages() == null) {
-			response.setInformationMessages(new ArrayList<String>());
+		if (inputData.getSortOrder() == null || inputData.getSortOrder().getFields().isEmpty()) {
+			response.getErrors().add(ERR_MESSAGE_EMPTY_SORT_ORDER);
+			return false;
 		}
 		boolean isValidDataForSort = validateXmlContentForSort(inputData, response);
-		boolean isValidSortOrderToSchema = validateXmlSortOrderToSchema(inputData.getSortOrder().trim(), response);
 
-		return isValidDataForSort && isValidSortOrderToSchema;
+		return isValidDataForSort;
 	}
 
 	@Override
 	public Response sort(final InputData inputData) throws ApplicationException {
-		Response response = new Response();
-		response.setInformationMessages(new ArrayList<String>());
-
-		if (inputData == null || inputData.getDataForSort() == null || inputData.getSortOrder() == null) {
-			response.setSuccess(false);
-			response.getErrors().add("Empty data");
-			return response;
+		if (inputData == null) {
+			throw new ApplicationException(ERR_MESSAGE_EMPTY_DATA);
 		}
 
+		Response response = new Response();
 		boolean isValidToSchemas = validateInputData(inputData, response);
 		boolean isValidDataToOrder = false;
 
 		if (isValidToSchemas) {
-			LinkedHashMap<String, String> mapOrderNamesOrdering = getOrderingsFromXml(inputData.getSortOrder());
-			response.getInformationMessages().add("Sort order: " + mapOrderNamesOrdering.entrySet());
+			LinkedHashMap<String, String> mapOrderNamesOrdering = getSortOrderMap(inputData.getSortOrder());
 
 			String dataForSort = inputData.getDataForSort().trim();
 			List<Node> listNodesForSort = getListNodesFromXmlContent(dataForSort);
-			response.getInformationMessages().add("Objects for sort amount: " + listNodesForSort.size());
 
 			isValidDataToOrder = validateXmlSortContentToSortOrder(listNodesForSort, mapOrderNamesOrdering, response);
 			if (isValidDataToOrder) {
@@ -325,6 +242,26 @@ public class SortServiceImpl implements SortService {
 		boolean succesSorting = isValidToSchemas && isValidDataToOrder;
 		response.setSuccess(succesSorting);
 		return response;
+	}
+
+	/**
+	 * Convert sort order to map in format:
+	 * 
+	 * key - name of sort field, value - sort order type.
+	 * 
+	 * @param sortOrderFields
+	 *            is object with fields for converting
+	 * @return map with values
+	 */
+	private LinkedHashMap<String, String> getSortOrderMap(final SortOrderFields sortOrderFields) {
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();
+
+		for (SortOrderField field : sortOrderFields.getFields()) {
+			if (field.getName() != null) {
+				map.put(field.getName(), field.getOrdering());
+			}
+		}
+		return map;
 	}
 
 	/**
@@ -360,16 +297,23 @@ public class SortServiceImpl implements SortService {
 				}
 			}
 		} catch (XPathExpressionException e) {
-			LOGGER.error("Validation SortContentToSortOrder, can't parse", e);
+			LOGGER.error("Validation error during parsing, can't parse", e);
 		}
 
 		boolean isValid = counterFieldNamesInDataForSort != 0;
 		if (!isValid) {
-			response.getErrors().add(ERR_MESSAGE_VALIDATION_SORT_ORDER_TO_DATA_);
+			response.getErrors().add(ERR_MESSAGE_VALIDATION_SORT_ORDER_TO_DATA);
 		}
 		return isValid;
 	}
 
+	/**
+	 * Convert {@code List<Node> listNodesForSort} to String with content of all
+	 * nodes.
+	 * 
+	 * @param listNodesForSort
+	 * @return
+	 */
 	private String convertListNodesToStringXml(List<Node> listNodesForSort) {
 		String result = "";
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -401,13 +345,16 @@ public class SortServiceImpl implements SortService {
 	 * Convert {@link Document} to {@link String} with it's content.
 	 * 
 	 * @param document
-	 * @return
+	 *            is doc for converting
+	 * @return string representation of document content
 	 * @throws TransformerException
+	 *             if can't transform
 	 */
 	private String convertXmlDocumentToString(final Document document) throws TransformerException {
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer transformer = tf.newTransformer();
-		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		String omitXmlDeclarationValue = "yes";
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, omitXmlDeclarationValue);
 		StringWriter writer = new StringWriter();
 		transformer.transform(new DOMSource(document), new StreamResult(writer));
 		String output = writer.getBuffer().toString();

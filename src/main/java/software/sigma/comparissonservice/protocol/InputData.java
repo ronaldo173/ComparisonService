@@ -1,5 +1,6 @@
 package software.sigma.comparissonservice.protocol;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -16,9 +17,8 @@ public class InputData {
 	@XmlCDATA
 	private String dataForSort;
 
-	@NotEmpty
-	@XmlCDATA
-	private String sortOrder;
+	@NotNull
+	private SortOrderFields sortOrder;
 
 	@XmlPath("dataForSort/@configName")
 	private String configName;
@@ -31,20 +31,20 @@ public class InputData {
 		this.dataForSort = dataForSort;
 	}
 
-	public String getSortOrder() {
-		return sortOrder;
-	}
-
-	public void setSortOrder(String sortOrder) {
-		this.sortOrder = sortOrder;
-	}
-
 	public String getConfigName() {
 		return configName;
 	}
 
 	public void setConfigName(String configName) {
 		this.configName = configName;
+	}
+
+	public SortOrderFields getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(SortOrderFields sortOrder) {
+		this.sortOrder = sortOrder;
 	}
 
 	@Override

@@ -29,8 +29,6 @@ public class Response {
 	 */
 	private List<String> errors;
 
-	private List<String> informationMessages;
-
 	@XmlCDATA
 	private String sortedData;
 
@@ -64,14 +62,6 @@ public class Response {
 		this.errors = errors;
 	}
 
-	public List<String> getInformationMessages() {
-		return informationMessages;
-	}
-
-	public void setInformationMessages(List<String> informationMessages) {
-		this.informationMessages = informationMessages;
-	}
-
 	public String getSortedData() {
 		return sortedData;
 	}
@@ -82,8 +72,7 @@ public class Response {
 
 	@Override
 	public String toString() {
-		return "Response [isSuccess=" + isSuccess + ", errors=" + errors + ", informationMessages="
-				+ informationMessages + "]";
+		return "Response [isSuccess=" + isSuccess + ", errors=" + errors + ", sortedData=" + sortedData + "]";
 	}
 
 }

@@ -15,3 +15,4 @@ target/classes/META-INF/maven/software.sigma/ComparisonService/pom.xml
 target/classes/META-INF/maven/software.sigma/ComparisonService/pom.properties
 target/classes/META-INF/maven/software.sigma/ComparisonService/pom.properties
 target/classes/META-INF/maven/software.sigma/ComparisonService/pom.properties
+target/classes/sql/db_create_put_test_data.sql
