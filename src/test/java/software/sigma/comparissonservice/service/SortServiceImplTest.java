@@ -160,29 +160,11 @@ public class SortServiceImplTest {
 
 	}
 
-	private SortOrderFields getValidSortOrder() {
-		SortOrderFields sortOrder = new SortOrderFields();
-		sortOrder.setFields(new ArrayList<SortOrderField>());
-
-		SortOrderField fieldOfOrder = new SortOrderField();
-		SortOrderField fieldOfOrder2 = new SortOrderField();
-		SortOrderField fieldOfOrder3 = new SortOrderField();
-		fieldOfOrder.setName("diagonal");
-		fieldOfOrder2.setName("price");
-		fieldOfOrder3.setName("resolution");
-
-		sortOrder.getFields().add(fieldOfOrder);
-		sortOrder.getFields().add(fieldOfOrder2);
-		sortOrder.getFields().add(fieldOfOrder3);
-
-		return sortOrder;
-	}
-
 	@Test
 	public void testSortShouldBeSuccess() throws ApplicationException {
 
 		InputData inputData = new InputData();
-		inputData.setSortOrder(getValidSortOrder());
+		inputData.setSortOrder(TestUtils.getValidSortOrder());
 		inputData.setDataForSort(getValidDataForSortWithMockDao());
 
 		String sortedData = sortService.sort(inputData);
@@ -195,7 +177,7 @@ public class SortServiceImplTest {
 	public void testSortShouldBeExceptionWrongData() throws ApplicationException {
 
 		InputData inputData = new InputData();
-		inputData.setSortOrder(getValidSortOrder());
+		inputData.setSortOrder(TestUtils.getValidSortOrder());
 		inputData.setDataForSort("smth not valid");
 
 		sortService.sort(inputData);

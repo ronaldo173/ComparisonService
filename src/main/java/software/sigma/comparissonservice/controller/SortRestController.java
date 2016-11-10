@@ -28,6 +28,7 @@ public class SortRestController {
 	public Response sortData(@Valid @RequestBody final InputData inputData) throws ApplicationException {
 
 		Response response = new Response();
+
 		boolean isValidData = sortService.validateInputData(inputData, response);
 
 		if (isValidData) {

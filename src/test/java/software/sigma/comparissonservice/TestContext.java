@@ -10,6 +10,8 @@ import software.sigma.comparissonservice.dao.ConfigurationDao;
 import software.sigma.comparissonservice.dao.ConfigurationDaoImpl;
 import software.sigma.comparissonservice.service.ConfigurationService;
 import software.sigma.comparissonservice.service.ConfigurationServiceImpl;
+import software.sigma.comparissonservice.service.SortService;
+import software.sigma.comparissonservice.service.SortServiceImpl;
 
 /**
  * Context for test service.
@@ -37,5 +39,10 @@ public class TestContext {
 	@Bean
 	DataSource dataSource() {
 		return Mockito.mock(DataSource.class);
+	}
+
+	@Bean
+	SortService sortServiceImpl() {
+		return Mockito.mock(SortServiceImpl.class);
 	}
 }

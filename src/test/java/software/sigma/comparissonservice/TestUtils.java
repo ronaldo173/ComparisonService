@@ -1,6 +1,7 @@
 package software.sigma.comparissonservice;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import javax.xml.bind.Marshaller;
 
 import software.sigma.comparissonservice.model.Configuration;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
+import software.sigma.comparissonservice.protocol.SortOrderField;
+import software.sigma.comparissonservice.protocol.SortOrderFields;
 import software.sigma.comparissonservice.utils.ConfigurationsConverter;
 
 public final class TestUtils {
@@ -22,7 +25,7 @@ public final class TestUtils {
 	 * @throws Exception
 	 *             if smth happened
 	 */
-	public static String convertToXml(final ConfigurationProtocol source) throws Exception {
+	public static <T> String convertToXml(final T source) throws Exception {
 		String result;
 		StringWriter sw = new StringWriter();
 		JAXBContext contextConfig = JAXBContext.newInstance(source.getClass());
@@ -80,6 +83,30 @@ public final class TestUtils {
 		config2.setName("name2");
 		config2.setConfigContent("content2");
 		return Arrays.asList(config1, config2);
+	}
+
+	/**
+	 * Return valid sort order for testing sort with content from file with
+	 * monitors.
+	 * 
+	 * @return sort order for sorting
+	 */
+	public static SortOrderFields getValidSortOrder() {
+		SortOrderFields sortOrder = new SortOrderFields();
+		sortOrder.setFields(new ArrayList<SortOrderField>());
+
+		SortOrderField fieldOfOrder = new SortOrderField();
+		SortOrderField fieldOfOrder2 = new SortOrderField();
+		SortOrderField fieldOfOrder3 = new SortOrderField();
+		fieldOfOrder.setName("diagonal");
+		fieldOfOrder2.setName("price");
+		fieldOfOrder3.setName("resolution");
+
+		sortOrder.getFields().add(fieldOfOrder);
+		sortOrder.getFields().add(fieldOfOrder2);
+		sortOrder.getFields().add(fieldOfOrder3);
+
+		return sortOrder;
 	}
 
 }

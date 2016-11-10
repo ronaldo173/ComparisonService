@@ -85,7 +85,7 @@ public class SortServiceImpl implements SortService {
 		LOGGER.debug("Validate input data with objects to xsd.");
 
 		boolean isValid = false;
-		String dataForValidation = inputData.getDataForSort().trim();
+		String dataForValidation = inputData.getDataForSort();
 
 		String configName = inputData.getConfigName();
 		if (configName != null) {
@@ -218,8 +218,7 @@ public class SortServiceImpl implements SortService {
 			return false;
 		}
 
-		String dataForSort = inputData.getDataForSort();
-		if (dataForSort == null || dataForSort.trim().isEmpty()) {
+		if (inputData.getDataForSort() == null || inputData.getDataForSort().trim().isEmpty()) {
 			response.getErrors().add(ERR_MESSAGE_EMPTY_DATA_FOR_SORT);
 			LOGGER.debug("empty data for sort");
 			return false;
@@ -230,6 +229,9 @@ public class SortServiceImpl implements SortService {
 			LOGGER.debug("empty sort order");
 			return false;
 		}
+
+		inputData.setDataForSort(inputData.getDataForSort().trim());
+		String dataForSort = inputData.getDataForSort();
 
 		boolean isValidDataForSort = validateXmlContentForSort(inputData, response);
 		LOGGER.debug("data for sort validation: " + isValidDataForSort);
@@ -262,7 +264,7 @@ public class SortServiceImpl implements SortService {
 
 		LinkedHashMap<String, String> mapOrderNamesOrdering = getSortOrderMap(inputData.getSortOrder());
 
-		String dataForSort = inputData.getDataForSort().trim();
+		String dataForSort = inputData.getDataForSort();
 		List<Node> listNodesForSort = getListNodesFromXmlContent(dataForSort);
 
 		Comparator<Node> comparator = getComparatorForNodes(mapOrderNamesOrdering);

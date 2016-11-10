@@ -40,6 +40,8 @@ import software.sigma.comparissonservice.service.ConfigurationService;
 @WebAppConfiguration
 public class ConfigurationRestControllerTest {
 
+	private static final String ENCODING = "UTF-8";
+
 	/**
 	 * Main entry point for server-side Spring MVC test support.
 	 */
@@ -162,7 +164,7 @@ public class ConfigurationRestControllerTest {
 		String responseXpath = "response/isSuccess";
 
 		ConfigurationProtocol configurationProtocol = TestUtils.getConfigProtocolsList().get(0);
-		byte[] contentForTest = TestUtils.convertToXml(configurationProtocol).getBytes(Charset.forName("UTF-8"));
+		byte[] contentForTest = TestUtils.convertToXml(configurationProtocol).getBytes(Charset.forName(ENCODING));
 
 		when(configServiceMock.save(configurationProtocol)).thenReturn(true);
 
@@ -179,7 +181,7 @@ public class ConfigurationRestControllerTest {
 
 		ConfigurationProtocol configurationProtocol = TestUtils.getConfigProtocolsList().get(0);
 		configurationProtocol.setId(1);
-		byte[] contentForTest = TestUtils.convertToXml(configurationProtocol).getBytes(Charset.forName("UTF-8"));
+		byte[] contentForTest = TestUtils.convertToXml(configurationProtocol).getBytes(Charset.forName(ENCODING));
 
 		when(configServiceMock.update(configurationProtocol)).thenReturn(true);
 
@@ -198,7 +200,7 @@ public class ConfigurationRestControllerTest {
 
 		ConfigurationProtocol configurationProtocol = TestUtils.getConfigProtocolsList().get(0);
 		configurationProtocol.setId(1);
-		byte[] contentForTest = TestUtils.convertToXml(configurationProtocol).getBytes(Charset.forName("UTF-8"));
+		byte[] contentForTest = TestUtils.convertToXml(configurationProtocol).getBytes(Charset.forName(ENCODING));
 
 		when(configServiceMock.update(configurationProtocol)).thenThrow(ApplicationException.class);
 
