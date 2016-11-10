@@ -54,8 +54,10 @@ public class SortServiceImpl implements SortService {
 	private static final String ERR_MESSAGE_CANT_GET_CONFIG_BY_NAME = "Can't get from service config by name, ";
 	private static final String ERR_MESSAGE_VALIDATION_SORT_ORDER_TO_DATA = "Validation sort order to data for sort - not enough occurances of elements with names as in sort order";
 	private static final String ERR_MESSAGE_CANT_FIND_CONFIG_FOR_DATA = "Can't find configuration according to your data for sort";
-	private static final String ERR_MESSAGE_EMPTY_DATA = "Empty data for sort";
+	private static final String ERR_MESSAGE_EMPTY_DATA_FOR_SORT = "Empty data for sort";
 	private static final String ERR_MESSAGE_EMPTY_SORT_ORDER = "Empty sort order";
+	private static final String ERR_MESSAGE_EMPTY_DATA = "Empty input data";
+	private static final String ERR_MESSAGE_CONFIGURATION_NOT_VALID_NAME = "Configuration with your name not valid, name:";
 
 	@Autowired
 	ConfigurationService configService;
@@ -85,12 +87,19 @@ public class SortServiceImpl implements SortService {
 		boolean isValid = false;
 		String dataForValidation = inputData.getDataForSort().trim();
 
-		if (inputData.getConfigName() != null) {
-			LOGGER.debug("Try to find config by name, NAME --> " + inputData.getConfigName());
+		String configName = inputData.getConfigName();
+		if (configName != null) {
+			LOGGER.debug("Try to find config by name, NAME --> " + configName);
 			ConfigurationProtocol configByName;
 			try {
-				configByName = configService.getByName(inputData.getConfigName());
+				configByName = configService.getByName(configName);
 				isValid = isValidToConfig(dataForValidation, configByName.getConfigContent());
+
+				if (!isValid) {
+					response.getErrors().add(ERR_MESSAGE_CONFIGURATION_NOT_VALID_NAME + configName);
+					LOGGER.debug("Config by name not valid");
+				}
+
 			} catch (ApplicationException e) {
 				LOGGER.debug("Can't get from service config by name, " + e.getMessage(), e);
 				response.getErrors().add(ERR_MESSAGE_CANT_GET_CONFIG_BY_NAME + e.getMessage());
@@ -108,14 +117,16 @@ public class SortServiceImpl implements SortService {
 				isValid = isValidToConfig(dataForValidation, configById.getConfigContent());
 
 				if (isValid) {
-					LOGGER.debug("Found valid configuration, name: " + configById.getName());
+					String nameOfConfig = configById.getName();
+					LOGGER.debug("Found valid configuration, name: " + nameOfConfig);
+					response.setInformationMessage("Configuration name: " + nameOfConfig);
 					break;
 				}
 			}
-		}
-		if (!isValid) {
-			response.getErrors().add(ERR_MESSAGE_CANT_FIND_CONFIG_FOR_DATA);
-			LOGGER.debug("Valid config not found");
+			if (!isValid) {
+				response.getErrors().add(ERR_MESSAGE_CANT_FIND_CONFIG_FOR_DATA);
+				LOGGER.debug("Valid config not found");
+			}
 		}
 		return isValid;
 	}
@@ -155,8 +166,10 @@ public class SortServiceImpl implements SortService {
 	 * @param xmlContent
 	 *            for parsing
 	 * @return list with parsed nodes
+	 * @throws ApplicationException
+	 *             if can't parse xml document
 	 */
-	private List<Node> getListNodesFromXmlContent(final String xmlContent) {
+	private List<Node> getListNodesFromXmlContent(final String xmlContent) throws ApplicationException {
 
 		List<Node> resultList = null;
 		StringBuilder expression = new StringBuilder("/");
@@ -177,6 +190,7 @@ public class SortServiceImpl implements SortService {
 			resultList = convertNodeListToList(nodeList);
 		} catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException e) {
 			LOGGER.debug("Can't parse xml to list with nodes", e);
+			throw new ApplicationException(e.getMessage());
 		}
 
 		return resultList;
@@ -198,19 +212,40 @@ public class SortServiceImpl implements SortService {
 	}
 
 	@Override
-	public boolean validateInputData(final InputData inputData, Response response) throws ApplicationException {
+	public boolean validateInputData(final InputData inputData, Response response) {
 		String dataForSort = inputData.getDataForSort();
 		if (dataForSort == null || dataForSort.trim().isEmpty()) {
-			response.getErrors().add(ERR_MESSAGE_EMPTY_DATA);
+			response.getErrors().add(ERR_MESSAGE_EMPTY_DATA_FOR_SORT);
+			LOGGER.debug("empty data for sort");
 			return false;
 		}
-		if (inputData.getSortOrder() == null || inputData.getSortOrder().getFields().isEmpty()) {
+		if (inputData.getSortOrder() == null || inputData.getSortOrder().getFields() == null
+				|| inputData.getSortOrder().getFields().isEmpty()) {
 			response.getErrors().add(ERR_MESSAGE_EMPTY_SORT_ORDER);
+			LOGGER.debug("empty sort order");
 			return false;
 		}
-		boolean isValidDataForSort = validateXmlContentForSort(inputData, response);
 
-		return isValidDataForSort;
+		boolean isValidDataForSort = validateXmlContentForSort(inputData, response);
+		LOGGER.debug("data for sort validation: " + isValidDataForSort);
+
+		/**
+		 * Check data for sort with sort order
+		 */
+		boolean isValidDataForSortToOrder = false;
+		try {
+			List<Node> listNodesForSort = getListNodesFromXmlContent(dataForSort);
+
+			if (isValidDataForSort) {
+				isValidDataForSortToOrder = validateXmlSortContentToSortOrder(listNodesForSort,
+						getSortOrderMap(inputData.getSortOrder()), response);
+			}
+		} catch (ApplicationException e) {
+			response.getErrors().add(e.getMessage());
+		}
+		LOGGER.debug("data for sort according to sort order validation: " + isValidDataForSortToOrder);
+
+		return isValidDataForSort && isValidDataForSortToOrder;
 	}
 
 	@Override
@@ -218,29 +253,19 @@ public class SortServiceImpl implements SortService {
 		if (inputData == null) {
 			throw new ApplicationException(ERR_MESSAGE_EMPTY_DATA);
 		}
-
 		Response response = new Response();
-		boolean isValidToSchemas = validateInputData(inputData, response);
-		boolean isValidDataToOrder = false;
 
-		if (isValidToSchemas) {
-			LinkedHashMap<String, String> mapOrderNamesOrdering = getSortOrderMap(inputData.getSortOrder());
+		LinkedHashMap<String, String> mapOrderNamesOrdering = getSortOrderMap(inputData.getSortOrder());
 
-			String dataForSort = inputData.getDataForSort().trim();
-			List<Node> listNodesForSort = getListNodesFromXmlContent(dataForSort);
+		String dataForSort = inputData.getDataForSort().trim();
+		List<Node> listNodesForSort = getListNodesFromXmlContent(dataForSort);
 
-			isValidDataToOrder = validateXmlSortContentToSortOrder(listNodesForSort, mapOrderNamesOrdering, response);
-			if (isValidDataToOrder) {
-				Comparator<Node> comparator = getComparatorForNodes(mapOrderNamesOrdering);
-				Collections.sort(listNodesForSort, comparator);
+		Comparator<Node> comparator = getComparatorForNodes(mapOrderNamesOrdering);
+		Collections.sort(listNodesForSort, comparator);
 
-				String sortedXmlContent = convertListNodesToStringXml(listNodesForSort);
-				response.setSortedData(sortedXmlContent);
-			}
-		}
+		String sortedXmlContent = convertListNodesToStringXml(listNodesForSort);
+		response.setSortedData(sortedXmlContent);
 
-		boolean succesSorting = isValidToSchemas && isValidDataToOrder;
-		response.setSuccess(succesSorting);
 		return response;
 	}
 

@@ -32,6 +32,8 @@ public class Response {
 	@XmlCDATA
 	private String sortedData;
 
+	private String informationMessage;
+
 	public Response() {
 		errors = new ArrayList<>();
 	}
@@ -68,6 +70,14 @@ public class Response {
 
 	public void setSortedData(String sortedData) {
 		this.sortedData = sortedData;
+	}
+
+	public String getInformationMessage() {
+		return informationMessage;
+	}
+
+	public void setInformationMessage(String informationMessage) {
+		this.informationMessage = informationMessage;
 	}
 
 	@Override

@@ -27,7 +27,17 @@ public class SortRestController {
 	@RequestMapping(path = "/sort", method = RequestMethod.POST, produces = MediaType.APPLICATION_XML_VALUE)
 	public Response sortData(@Valid @RequestBody final InputData inputData) throws ApplicationException {
 
-		Response sortResponse = sortService.sort(inputData);
-		return sortResponse;
+		Response response = new Response();
+		boolean isValidData = sortService.validateInputData(inputData, response);
+
+		if (isValidData) {
+			String informationMessage = response.getInformationMessage();
+
+			response = sortService.sort(inputData);
+			response.setInformationMessage(informationMessage);
+		}
+
+		response.setSuccess(isValidData);
+		return response;
 	}
 }

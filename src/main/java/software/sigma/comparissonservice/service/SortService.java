@@ -7,25 +7,22 @@ import software.sigma.comparissonservice.protocol.Response;
 public interface SortService {
 
 	/**
-	 * Validate content for sort and sort order.
+	 * Validate content of input data.
 	 * 
 	 * @param inputData
 	 *            object with input data
 	 * @param response
-	 *            is {@link Response} object for adding messages about
-	 *            validation
-	 * @return true if all is valid
-	 * @throws ApplicationException
-	 *             if smth not valid/some problem found, description in message
+	 *            is {@link Response} object for adding error messages about
+	 *            validation if smth not valid
+	 * @return true if input data is valid
 	 */
-	boolean validateInputData(InputData inputData, Response response) throws ApplicationException;
+	boolean validateInputData(InputData inputData, Response response);
 
 	/**
 	 * Sort input data.
 	 * 
 	 * @param inputData
 	 *            object with input data for sort and sort order
-	 * @return
 	 * @throws ApplicationException
 	 *             if smth happened
 	 * @return response object with information about work
