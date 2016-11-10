@@ -19,14 +19,15 @@ public interface SortService {
 	boolean validateInputData(InputData inputData, Response response);
 
 	/**
-	 * Sort input data.
+	 * Sort input data according to content of input object. Before sorting data
+	 * should be validated by: {@code validateInputData}
 	 * 
 	 * @param inputData
 	 *            object with input data for sort and sort order
 	 * @throws ApplicationException
 	 *             if smth happened
-	 * @return response object with information about work
+	 * @return string with sorted information inside
 	 */
-	Response sort(InputData inputData) throws ApplicationException;
+	String sort(InputData inputData) throws ApplicationException;
 
 }

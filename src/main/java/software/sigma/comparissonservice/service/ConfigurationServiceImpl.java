@@ -32,6 +32,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	private static final String ERR_MESSAGE_NOT_FOUND_CONFIG_BY_ID = "Configuration with your id not exists! Id: ";
 
 	private static final String ERR_MESSAGE_NOT_FOUND_CONFIG_BY_NAME = "Configuration with your name not exists! Name: ";
+	private static final String ERR_MESSAGE_CANT_UPDATE_CONFIG = "Can't update configuration. Id: ";
 
 	@Autowired
 	private ConfigurationDao dao;
@@ -77,7 +78,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 				updateSuccess = dao.update(ConfigurationsConverter.convert(configurationProtocol));
 			} catch (Throwable e) {
-				throw new ApplicationException("Can't update configuration. Id: " + configurationProtocol.getId(), e);
+				String errMessage = ERR_MESSAGE_CANT_UPDATE_CONFIG + configurationProtocol.getId();
+				if (e.getCause() != null) {
+					errMessage += ", " + e.getCause().getMessage();
+				}
+				throw new ApplicationException(errMessage, e);
 			}
 		} else {
 			throw new ApplicationException(ERR_MESSAGE_NOT_VALID_CONFIG_CONTENT);

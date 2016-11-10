@@ -31,10 +31,8 @@ public class SortRestController {
 		boolean isValidData = sortService.validateInputData(inputData, response);
 
 		if (isValidData) {
-			String informationMessage = response.getInformationMessage();
-
-			response = sortService.sort(inputData);
-			response.setInformationMessage(informationMessage);
+			String sortedData = sortService.sort(inputData);
+			response.setSortedData(sortedData);
 		}
 
 		response.setSuccess(isValidData);

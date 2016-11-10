@@ -2,12 +2,9 @@ package software.sigma.comparissonservice.service;
 
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,6 +16,8 @@ import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 import software.sigma.comparissonservice.protocol.InputData;
 import software.sigma.comparissonservice.protocol.Response;
+import software.sigma.comparissonservice.protocol.SortOrderField;
+import software.sigma.comparissonservice.protocol.SortOrderFields;
 import software.sigma.comparissonservice.utils.CommonUtils;
 
 /**
@@ -41,11 +40,10 @@ public class SortServiceImplTest {
 		sortService.setConfigService(configService);
 
 		responseMock = Mockito.mock(Response.class);
-		responseMock.setInformationMessages(Mockito.mock(ArrayList.class));
 	}
 
 	@Test
-	public void testValidateContentForSortShoudBeSuccess() throws ApplicationException, IOException {
+	public void testValidateContentForSortShoudBeSuccess() throws ApplicationException {
 
 		String xmlContentCorrectForCheck = getValidDataForSortWithMockDao();
 
@@ -55,8 +53,7 @@ public class SortServiceImplTest {
 	}
 
 	@Test
-	public void testValidateContentForSortShoudBeNotSuccessForNotExistingConfig()
-			throws ApplicationException, IOException {
+	public void testValidateContentForSortShoudBeNotSuccessForNotExistingConfig() throws ApplicationException {
 
 		URL urlFileXml = getClass()
 				.getResource("/software/sigma/comparissonservice/resources/monitorsXmlForTest_VALID.xml");
@@ -75,83 +72,61 @@ public class SortServiceImplTest {
 	}
 
 	@Test
-	public void testValidateSortOrderShouldBeSuccess() {
+	public void testValidateInputDataShouldBeNotSuccessPassNullOrEmptyArgs() {
 
-		URL urlFileXmlOrder = getClass()
-				.getResource("/software/sigma/comparissonservice/resources/sortOrderMonitors_VALID.xml");
-		String xmlContentSortOrder = CommonUtils.readFileToString(urlFileXmlOrder.getFile());
-
-		boolean isValid = sortService.validateXmlSortOrderToSchema(xmlContentSortOrder, responseMock);
-		Assert.assertTrue(isValid);
-	}
-
-	@Test
-	public void testValidateSortOrderShouldBeNotSuccessIfPassNullOrEmpty() {
-
-		boolean isValidNullArg = sortService.validateXmlSortOrderToSchema(null, responseMock);
-		boolean isValidEmptyArg = sortService.validateXmlSortOrderToSchema("", responseMock);
+		boolean isValidNullArg = sortService.validateInputData(null, null);
+		boolean isValidEmptyInputData = sortService.validateInputData(new InputData(), responseMock);
 		Assert.assertFalse(isValidNullArg);
-		Assert.assertFalse(isValidEmptyArg);
+		Assert.assertFalse(isValidEmptyInputData);
 	}
 
 	@Test
-	public void testValidateSortOrderShouldBeNotSuccessNotValidData() {
-
-		URL urlFileXmlOrder = getClass()
-				.getResource("/software/sigma/comparissonservice/resources/sortOrder_NOTVALID.xml");
-		String xmlContentSortOrder = CommonUtils.readFileToString(urlFileXmlOrder.getFile());
-
-		boolean isValid = sortService.validateXmlSortOrderToSchema(xmlContentSortOrder, responseMock);
-		Assert.assertFalse(isValid);
-	}
-
-	@Test
-	public void testValidateInputDataShouldBeNotSuccess() throws ApplicationException {
+	public void testValidateInputDataShouldBeNotSuccessWrongSortOrder() throws ApplicationException {
 
 		InputData inputData = new InputData();
-		inputData.setDataForSort("wrong");
-		inputData.setSortOrder("wrong");
+		inputData.setDataForSort(getValidDataForSortWithMockDao());
+		inputData.setSortOrder(new SortOrderFields());
 		boolean validateInputData = sortService.validateInputData(inputData, responseMock);
 
 		Assert.assertFalse(validateInputData);
 	}
 
 	@Test
-	public void testGetOrderingsFromXml() throws ApplicationException {
-		URL urlFileXmlOrder = getClass()
-				.getResource("/software/sigma/comparissonservice/resources/sortOrder_NOTVALID.xml");
-		String xmlContentSortOrder = CommonUtils.readFileToString(urlFileXmlOrder.getFile());
+	public void testValidateInputDataShouldBeNotSuccessWrongFieldNamesInSortOrder() throws ApplicationException {
 
-		Map<String, String> mapOrder = sortService.getOrderingsFromXml(xmlContentSortOrder);
+		InputData inputData = new InputData();
+		inputData.setDataForSort(getValidDataForSortWithMockDao());
 
-		Assert.assertNotNull(mapOrder);
-		Assert.assertTrue(!mapOrder.isEmpty());
-
-		for (Entry<String, String> entry : mapOrder.entrySet()) {
-			Assert.assertNotNull(entry.getKey());
+		SortOrderFields sortOrder = new SortOrderFields();
+		sortOrder.setFields(new ArrayList<SortOrderField>());
+		for (int i = 0; i < 5; i++) {
+			SortOrderField fieldOfOrder = new SortOrderField();
+			fieldOfOrder.setName("name" + i);
+			sortOrder.getFields().add(fieldOfOrder);
 		}
-	}
 
-	@Test(expected = ApplicationException.class)
-	public void testGetOrderingsFromXmlShouldBeExceptionWrongData() throws ApplicationException {
-		sortService.getOrderingsFromXml("1");
+		inputData.setSortOrder(sortOrder);
+
+		boolean validateInputData = sortService.validateInputData(inputData, responseMock);
+
+		Assert.assertFalse(validateInputData);
 	}
 
 	@Test
-	public void testSortShouldBeNotSuccessNullData() throws ApplicationException {
-		Response responseNullData = sortService.sort(null);
+	public void testValidationShouldBeSuccess() throws ApplicationException {
 		InputData inputData = new InputData();
-		Response responseEmptyData = sortService.sort(inputData);
-		inputData.setDataForSort("");
-		Response responseEmptySortOrder = sortService.sort(inputData);
-		inputData.setDataForSort(null);
-		inputData.setSortOrder("order");
-		Response responseEmptySortData = sortService.sort(inputData);
+		inputData.setDataForSort(getValidDataForSortWithMockDao());
 
-		Assert.assertFalse(responseNullData.isSuccess());
-		Assert.assertFalse(responseEmptyData.isSuccess());
-		Assert.assertFalse(responseEmptySortData.isSuccess());
-		Assert.assertFalse(responseEmptySortOrder.isSuccess());
+		SortOrderFields sortOrder = new SortOrderFields();
+		SortOrderField fieldOfOrder = new SortOrderField();
+		fieldOfOrder.setName("diagonal");
+		sortOrder.setFields(new ArrayList<SortOrderField>());
+		sortOrder.getFields().add(fieldOfOrder);
+
+		inputData.setSortOrder(sortOrder);
+		boolean validateInputData = sortService.validateInputData(inputData, responseMock);
+
+		Assert.assertTrue(validateInputData);
 	}
 
 	/**
@@ -185,36 +160,50 @@ public class SortServiceImplTest {
 
 	}
 
-	@Test
-	public void testSortShouldBeSuccess() throws ApplicationException {
-		URL urlFileSortOrder = getClass()
-				.getResource("/software/sigma/comparissonservice/resources/sortOrderMonitors_VALID.xml");
-		String sortOrder = CommonUtils.readFileToString(urlFileSortOrder.getFile());
+	private SortOrderFields getValidSortOrder() {
+		SortOrderFields sortOrder = new SortOrderFields();
+		sortOrder.setFields(new ArrayList<SortOrderField>());
 
-		InputData inputData = new InputData();
-		inputData.setSortOrder(sortOrder);
-		inputData.setDataForSort(getValidDataForSortWithMockDao());
+		SortOrderField fieldOfOrder = new SortOrderField();
+		SortOrderField fieldOfOrder2 = new SortOrderField();
+		SortOrderField fieldOfOrder3 = new SortOrderField();
+		fieldOfOrder.setName("diagonal");
+		fieldOfOrder2.setName("price");
+		fieldOfOrder3.setName("resolution");
 
-		Response response = sortService.sort(inputData);
+		sortOrder.getFields().add(fieldOfOrder);
+		sortOrder.getFields().add(fieldOfOrder2);
+		sortOrder.getFields().add(fieldOfOrder3);
 
-		Assert.assertTrue(response.isSuccess());
-		Assert.assertNotNull(response.getSortedData());
+		return sortOrder;
 	}
 
 	@Test
-	public void testSortShouldBeNotSuccessNotCorrectFieldNames() throws ApplicationException {
-
-		URL urlFileXmlOrder = getClass().getResource(
-				"/software/sigma/comparissonservice/resources/sortOrder_VALID_not_correct_field_names.xml");
-		String xmlContentSortOrder = CommonUtils.readFileToString(urlFileXmlOrder.getFile());
+	public void testSortShouldBeSuccess() throws ApplicationException {
 
 		InputData inputData = new InputData();
-		inputData.setSortOrder(xmlContentSortOrder);
+		inputData.setSortOrder(getValidSortOrder());
 		inputData.setDataForSort(getValidDataForSortWithMockDao());
-		Response response = sortService.sort(inputData);
 
-		Assert.assertFalse(response.isSuccess());
-		Assert.assertFalse(response.getErrors().isEmpty());
+		String sortedData = sortService.sort(inputData);
+
+		Assert.assertNotNull(sortedData);
+		Assert.assertTrue(!sortedData.isEmpty());
+	}
+
+	@Test(expected = ApplicationException.class)
+	public void testSortShouldBeExceptionWrongData() throws ApplicationException {
+
+		InputData inputData = new InputData();
+		inputData.setSortOrder(getValidSortOrder());
+		inputData.setDataForSort("smth not valid");
+
+		sortService.sort(inputData);
+	}
+
+	@Test(expected = ApplicationException.class)
+	public void testSortShouldBeExceptionNullData() throws ApplicationException {
+		sortService.sort(null);
 	}
 
 }

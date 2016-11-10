@@ -113,7 +113,8 @@ public final class ConfigurationRestController {
 			@Valid @RequestBody final ConfigurationProtocol configurationProtocol) throws ApplicationException {
 		Response response = new Response();
 
-		LOGGER.debug("/configuration PUT, id for update: " + id + "\n get object for update: " + configurationProtocol);
+		LOGGER.debug("/configuration PUT, id for update: " + id + "\n get object for update: "
+				+ configurationProtocol.getName());
 		configurationProtocol.setId(id);
 
 		boolean successSave = configService.update(configurationProtocol);

@@ -213,6 +213,11 @@ public class SortServiceImpl implements SortService {
 
 	@Override
 	public boolean validateInputData(final InputData inputData, Response response) {
+		if (inputData == null || response == null) {
+			LOGGER.error("empty args for validation");
+			return false;
+		}
+
 		String dataForSort = inputData.getDataForSort();
 		if (dataForSort == null || dataForSort.trim().isEmpty()) {
 			response.getErrors().add(ERR_MESSAGE_EMPTY_DATA_FOR_SORT);
@@ -242,6 +247,7 @@ public class SortServiceImpl implements SortService {
 			}
 		} catch (ApplicationException e) {
 			response.getErrors().add(e.getMessage());
+			LOGGER.debug(e.getMessage());
 		}
 		LOGGER.debug("data for sort according to sort order validation: " + isValidDataForSortToOrder);
 
@@ -249,11 +255,10 @@ public class SortServiceImpl implements SortService {
 	}
 
 	@Override
-	public Response sort(final InputData inputData) throws ApplicationException {
+	public String sort(final InputData inputData) throws ApplicationException {
 		if (inputData == null) {
 			throw new ApplicationException(ERR_MESSAGE_EMPTY_DATA);
 		}
-		Response response = new Response();
 
 		LinkedHashMap<String, String> mapOrderNamesOrdering = getSortOrderMap(inputData.getSortOrder());
 
@@ -264,9 +269,7 @@ public class SortServiceImpl implements SortService {
 		Collections.sort(listNodesForSort, comparator);
 
 		String sortedXmlContent = convertListNodesToStringXml(listNodesForSort);
-		response.setSortedData(sortedXmlContent);
-
-		return response;
+		return sortedXmlContent;
 	}
 
 	/**
@@ -328,6 +331,7 @@ public class SortServiceImpl implements SortService {
 		boolean isValid = counterFieldNamesInDataForSort != 0;
 		if (!isValid) {
 			response.getErrors().add(ERR_MESSAGE_VALIDATION_SORT_ORDER_TO_DATA);
+			LOGGER.debug("Not valid sort content with sort order");
 		}
 		return isValid;
 	}
