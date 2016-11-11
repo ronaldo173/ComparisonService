@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,10 +25,14 @@ import org.springframework.web.context.WebApplicationContext;
 import software.sigma.comparissonservice.App;
 import software.sigma.comparissonservice.TestContext;
 import software.sigma.comparissonservice.TestUtils;
-import software.sigma.comparissonservice.protocol.InputData;
-import software.sigma.comparissonservice.protocol.Response;
+import software.sigma.comparissonservice.protocol.InputDataDTO;
+import software.sigma.comparissonservice.protocol.SortOrderFieldDTO;
+import software.sigma.comparissonservice.protocol.SortOrderFieldsDTO;
 import software.sigma.comparissonservice.service.SortService;
 import software.sigma.comparissonservice.utils.CommonUtils;
+import software.sigma.comparissonservice.vo.InputDataVO;
+import software.sigma.comparissonservice.vo.ResponseVO;
+import software.sigma.comparissonservice.vo.SortOrderFieldVO;
 
 /**
  * Integration tests for sort feature.
@@ -69,14 +75,14 @@ public class SortRestControllerTest {
 	@Test
 	public void testSortSuccesResult() throws Exception {
 		String responseXpath = "response/isSuccess";
-		InputData inputData = getValidInputObjectForSorting();
+		InputDataDTO inputData = getValidInputObjectForSorting();
 
 		String xmlValueOfInput = TestUtils.convertToXml(inputData).trim();
 		byte[] contentInputObject = xmlValueOfInput.getBytes(Charset.forName(ENCODING));
 
-		Mockito.when(sortService.validateInputData((InputData) Mockito.any(), (Response) Mockito.any()))
+		Mockito.when(sortService.validateInputData((InputDataVO) Mockito.any(), (ResponseVO) Mockito.any()))
 				.thenReturn(new Boolean(true));
-		Mockito.when(sortService.sort((InputData) Mockito.any())).thenCallRealMethod();
+		Mockito.when(sortService.sort((InputDataVO) Mockito.any())).thenCallRealMethod();
 
 		mockMvc.perform(post(URL_PREFIX + "sort/").contentType(MediaType.APPLICATION_XML).content(contentInputObject)
 				.accept(MediaType.APPLICATION_XML)).andDo(MockMvcResultHandlers.print())
@@ -86,30 +92,46 @@ public class SortRestControllerTest {
 	@Test
 	public void testSortNotSuccessNotValidData() throws Exception {
 		String responseXpath = "response/isSuccess";
-		InputData inputData = getValidInputObjectForSorting();
+		InputDataDTO inputData = getValidInputObjectForSorting();
 
 		String xmlValueOfInput = TestUtils.convertToXml(inputData).trim();
 		byte[] contentInputObject = xmlValueOfInput.getBytes(Charset.forName(ENCODING));
 
-		Mockito.when(sortService.validateInputData((InputData) Mockito.any(), (Response) Mockito.any()))
+		Mockito.when(sortService.validateInputData((InputDataVO) Mockito.any(), (ResponseVO) Mockito.any()))
 				.thenReturn(new Boolean(false));
-		Mockito.when(sortService.sort((InputData) Mockito.any())).thenCallRealMethod();
+		Mockito.when(sortService.sort((InputDataVO) Mockito.any())).thenCallRealMethod();
 
 		mockMvc.perform(post(URL_PREFIX + "sort/").contentType(MediaType.APPLICATION_XML).content(contentInputObject)
 				.accept(MediaType.APPLICATION_XML)).andDo(MockMvcResultHandlers.print())
 				.andExpect(xpath(responseXpath).booleanValue(false));
 	}
 
-	private InputData getValidInputObjectForSorting() {
-		InputData inputData = new InputData();
+	private InputDataDTO getValidInputObjectForSorting() {
+		InputDataDTO inputData = new InputDataDTO();
 
 		URL urlFileXml = getClass()
 				.getResource("/software/sigma/comparissonservice/resources/monitorsXmlForTest_VALID.xml");
 		String xmlContentForSort = CommonUtils.readFileToString(urlFileXml.getFile());
 
 		inputData.setDataForSort(xmlContentForSort);
-		inputData.setSortOrder(TestUtils.getValidSortOrder());
+		List<SortOrderFieldVO> validSortOrderVO = TestUtils.getValidSortOrder();
+		SortOrderFieldsDTO sortOrder = new SortOrderFieldsDTO();
+		sortOrder.setFields(new ArrayList<SortOrderFieldDTO>());
+
+		for (SortOrderFieldVO sortOrderFieldVO : validSortOrderVO) {
+			sortOrder.getFields().add(convert(sortOrderFieldVO));
+		}
+
+		inputData.setSortOrder(sortOrder);
 		return inputData;
+	}
+
+	private SortOrderFieldDTO convert(SortOrderFieldVO sortOrderFieldVO) {
+		SortOrderFieldDTO sortOrderFieldDTO = new SortOrderFieldDTO();
+
+		sortOrderFieldDTO.setName(sortOrderFieldVO.getName());
+		sortOrderFieldDTO.setOrdering(sortOrderFieldDTO.getOrdering());
+		return sortOrderFieldDTO;
 	}
 
 }

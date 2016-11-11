@@ -9,10 +9,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import software.sigma.comparissonservice.model.Configuration;
-import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
-import software.sigma.comparissonservice.protocol.SortOrderField;
-import software.sigma.comparissonservice.protocol.SortOrderFields;
-import software.sigma.comparissonservice.utils.ConfigurationsConverter;
+import software.sigma.comparissonservice.vo.ConfigurationVO;
+import software.sigma.comparissonservice.vo.ConverterVoDomain;
+import software.sigma.comparissonservice.vo.SortOrderFieldVO;
 
 public final class TestUtils {
 
@@ -44,24 +43,24 @@ public final class TestUtils {
 	 * @return result of check, true - equals
 	 */
 	public static boolean isConfigurationAndDtoConfigEquals(final Configuration configuration,
-			final ConfigurationProtocol configurationProtocol) {
-		ConfigurationProtocol configConvertedToProtocol = ConfigurationsConverter.convert(configuration);
+			final ConfigurationVO configurationProtocol) {
+		ConfigurationVO configConvertedToProtocol = ConverterVoDomain.convert(configuration);
 
 		return configConvertedToProtocol.equals(configurationProtocol);
 	}
 
 	/**
-	 * Get list with {@link ConfigurationProtocol} objects.
+	 * Get list with {@link ConfigurationVO} objects.
 	 * 
 	 * @return list with objects
 	 */
-	public static List<ConfigurationProtocol> getConfigProtocolsList() {
-		ConfigurationProtocol configFirst = new ConfigurationProtocol();
+	public static List<ConfigurationVO> getConfigProtocolsList() {
+		ConfigurationVO configFirst = new ConfigurationVO();
 		configFirst.setId(1);
 		configFirst.setName("Mock config 1");
 		configFirst.setConfigContent("<?xml version=\"1.0\"?><xs:schema></xs:schema>");
 
-		ConfigurationProtocol configSecond = new ConfigurationProtocol();
+		ConfigurationVO configSecond = new ConfigurationVO();
 		configSecond.setId(2);
 		configSecond.setName("Mock config 2");
 		configSecond.setConfigContent("<?xml version=\"1.0\"?><xs:schema>SCHEMA2</xs:schema>");
@@ -91,20 +90,19 @@ public final class TestUtils {
 	 * 
 	 * @return sort order for sorting
 	 */
-	public static SortOrderFields getValidSortOrder() {
-		SortOrderFields sortOrder = new SortOrderFields();
-		sortOrder.setFields(new ArrayList<SortOrderField>());
+	public static List<SortOrderFieldVO> getValidSortOrder() {
+		List<SortOrderFieldVO> sortOrder = new ArrayList<>();
 
-		SortOrderField fieldOfOrder = new SortOrderField();
-		SortOrderField fieldOfOrder2 = new SortOrderField();
-		SortOrderField fieldOfOrder3 = new SortOrderField();
+		SortOrderFieldVO fieldOfOrder = new SortOrderFieldVO();
+		SortOrderFieldVO fieldOfOrder2 = new SortOrderFieldVO();
+		SortOrderFieldVO fieldOfOrder3 = new SortOrderFieldVO();
 		fieldOfOrder.setName("diagonal");
 		fieldOfOrder2.setName("price");
 		fieldOfOrder3.setName("resolution");
 
-		sortOrder.getFields().add(fieldOfOrder);
-		sortOrder.getFields().add(fieldOfOrder2);
-		sortOrder.getFields().add(fieldOfOrder3);
+		sortOrder.add(fieldOfOrder);
+		sortOrder.add(fieldOfOrder2);
+		sortOrder.add(fieldOfOrder3);
 
 		return sortOrder;
 	}

@@ -32,8 +32,10 @@ import software.sigma.comparissonservice.App;
 import software.sigma.comparissonservice.TestContext;
 import software.sigma.comparissonservice.TestUtils;
 import software.sigma.comparissonservice.exception.ApplicationException;
-import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
+import software.sigma.comparissonservice.protocol.ConfigurationDTO;
+import software.sigma.comparissonservice.protocol.ConverterDtoVo;
 import software.sigma.comparissonservice.service.ConfigurationService;
+import software.sigma.comparissonservice.vo.ConfigurationVO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { App.class, TestContext.class })
@@ -81,7 +83,7 @@ public class ConfigurationRestControllerTest {
 		String configNameXpath = "configurations/configuration[%s]/name";
 		String configIdXpath = "configurations/configuration[%s]/id";
 
-		List<ConfigurationProtocol> listConfigs = TestUtils.getConfigProtocolsList();
+		List<ConfigurationVO> listConfigs = TestUtils.getConfigProtocolsList();
 		when(configServiceMock.getAll()).thenReturn(listConfigs);
 
 		mockMvc.perform(get(URL_PREFIX + "configuration/").accept(MediaType.APPLICATION_XML))
@@ -100,7 +102,7 @@ public class ConfigurationRestControllerTest {
 		String configIdXpath = "configuration[%s]/id";
 		int idOfConfig = 1;
 
-		ConfigurationProtocol configuration = TestUtils.getConfigProtocolsList().get(0);
+		ConfigurationVO configuration = TestUtils.getConfigProtocolsList().get(0);
 		when(configServiceMock.getById(idOfConfig)).thenReturn(configuration);
 
 		mockMvc.perform(get(URL_PREFIX + "configuration/" + idOfConfig).accept(MediaType.APPLICATION_XML))
@@ -150,7 +152,7 @@ public class ConfigurationRestControllerTest {
 	public void testGetAllShouldReturnEmptyResult() throws Exception {
 
 		String configXpath = "configurations/configuration[%s]";
-		when(configServiceMock.getAll()).thenReturn(new ArrayList<ConfigurationProtocol>());
+		when(configServiceMock.getAll()).thenReturn(new ArrayList<ConfigurationVO>());
 
 		mockMvc.perform(get(URL_PREFIX + "configuration/").accept(MediaType.APPLICATION_XML))
 				.andExpect(xpath(configXpath, 1).doesNotExist()).andDo(MockMvcResultHandlers.print());
@@ -163,15 +165,16 @@ public class ConfigurationRestControllerTest {
 	public void testSaveEntityShouldReturnSuccessResponse() throws Exception {
 		String responseXpath = "response/isSuccess";
 
-		ConfigurationProtocol configurationProtocol = TestUtils.getConfigProtocolsList().get(0);
-		byte[] contentForTest = TestUtils.convertToXml(configurationProtocol).getBytes(Charset.forName(ENCODING));
+		ConfigurationVO configuration = TestUtils.getConfigProtocolsList().get(0);
+		ConfigurationDTO configurationDTO = ConverterDtoVo.convert(configuration);
+		byte[] contentForTest = TestUtils.convertToXml(configurationDTO).getBytes(Charset.forName(ENCODING));
 
-		when(configServiceMock.save(configurationProtocol)).thenReturn(true);
+		when(configServiceMock.save(configuration)).thenReturn(true);
 
 		mockMvc.perform(post(URL_PREFIX + "configuration/").contentType(MediaType.APPLICATION_XML)
 				.content(contentForTest).accept(MediaType.APPLICATION_XML))
 				.andExpect(xpath(responseXpath).booleanValue(true)).andDo(MockMvcResultHandlers.print());
-		verify(configServiceMock, times(1)).save(configurationProtocol);
+		verify(configServiceMock, times(1)).save(configuration);
 		verifyNoMoreInteractions(configServiceMock);
 	}
 
@@ -179,18 +182,19 @@ public class ConfigurationRestControllerTest {
 	public void testUpdateEntityShouldReturnSuccessResponse() throws Exception {
 		String responseXpath = "response/isSuccess";
 
-		ConfigurationProtocol configurationProtocol = TestUtils.getConfigProtocolsList().get(0);
-		configurationProtocol.setId(1);
-		byte[] contentForTest = TestUtils.convertToXml(configurationProtocol).getBytes(Charset.forName(ENCODING));
+		ConfigurationVO configurationVO = TestUtils.getConfigProtocolsList().get(0);
+		ConfigurationDTO configuration = ConverterDtoVo.convert(configurationVO);
 
-		when(configServiceMock.update(configurationProtocol)).thenReturn(true);
+		configuration.setId(1);
+		byte[] contentForTest = TestUtils.convertToXml(configuration).getBytes(Charset.forName(ENCODING));
+
+		when(configServiceMock.update(configurationVO)).thenReturn(true);
 
 		mockMvc.perform(put(URL_PREFIX + "configuration/1").contentType(MediaType.APPLICATION_XML)
 				.content(contentForTest).accept(MediaType.APPLICATION_XML))
 				.andExpect(xpath(responseXpath).booleanValue(true)).andDo(MockMvcResultHandlers.print());
-		verify(configServiceMock, times(1)).update(configurationProtocol);
+		verify(configServiceMock, times(1)).update(configurationVO);
 		verifyNoMoreInteractions(configServiceMock);
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -198,16 +202,17 @@ public class ConfigurationRestControllerTest {
 	public void testUpdateEntityShouldReturnErrorResponse() throws Exception {
 		String responseXpath = "response/isSuccess";
 
-		ConfigurationProtocol configurationProtocol = TestUtils.getConfigProtocolsList().get(0);
-		configurationProtocol.setId(1);
-		byte[] contentForTest = TestUtils.convertToXml(configurationProtocol).getBytes(Charset.forName(ENCODING));
+		ConfigurationVO configuration = TestUtils.getConfigProtocolsList().get(0);
+		ConfigurationDTO configurationDTO = ConverterDtoVo.convert(configuration);
+		configuration.setId(1);
+		byte[] contentForTest = TestUtils.convertToXml(configurationDTO).getBytes(Charset.forName(ENCODING));
 
-		when(configServiceMock.update(configurationProtocol)).thenThrow(ApplicationException.class);
+		when(configServiceMock.update(configuration)).thenThrow(ApplicationException.class);
 
 		mockMvc.perform(put(URL_PREFIX + "configuration/1").contentType(MediaType.APPLICATION_XML)
 				.content(contentForTest).accept(MediaType.APPLICATION_XML))
 				.andExpect(xpath(responseXpath).booleanValue(false)).andDo(MockMvcResultHandlers.print());
-		verify(configServiceMock, times(1)).update(configurationProtocol);
+		verify(configServiceMock, times(1)).update(configuration);
 		verifyNoMoreInteractions(configServiceMock);
 
 	}

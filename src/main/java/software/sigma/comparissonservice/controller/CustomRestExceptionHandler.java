@@ -9,7 +9,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import software.sigma.comparissonservice.exception.ApplicationException;
-import software.sigma.comparissonservice.protocol.Response;
+import software.sigma.comparissonservice.protocol.ResponseDTO;
+import software.sigma.comparissonservice.vo.ResponseVO;
 
 @ControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -20,31 +21,31 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 	 * Response if not correct format of id in request to service.
 	 * 
 	 * @param exception
-	 * @return {@link Response} object with information
+	 * @return {@link ResponseVO} object with information
 	 */
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	@ResponseBody
-	public Response handleMethodArgumentTypeMismatch(final MethodArgumentTypeMismatchException exception) {
+	public ResponseDTO handleMethodArgumentTypeMismatch(final MethodArgumentTypeMismatchException exception) {
 		String errorMessage = exception.getName() + " should be of type " + exception.getRequiredType().getName();
 
 		LOGGER.debug(exception.getMessage());
-		return new Response(false, errorMessage);
+		return new ResponseDTO(false, errorMessage);
 	}
 
 	@ExceptionHandler(ApplicationException.class)
 	@ResponseBody
-	public Response handlePersistException(final ApplicationException exception) {
+	public ResponseDTO handlePersistException(final ApplicationException exception) {
 		LOGGER.debug(exception.getMessage());
-		return new Response(false, exception.getMessage());
+		return new ResponseDTO(false, exception.getMessage());
 
 	}
 
 	@ExceptionHandler(DuplicateKeyException.class)
 	@ResponseBody
-	public Response handlePersistDaoExceptionDublicateKey(final DuplicateKeyException exception) {
+	public ResponseDTO handlePersistDaoExceptionDublicateKey(final DuplicateKeyException exception) {
 		LOGGER.debug(exception.getMessage());
 		String message = exception.getMostSpecificCause().getMessage();
-		return new Response(false, message);
+		return new ResponseDTO(false, message);
 
 	}
 

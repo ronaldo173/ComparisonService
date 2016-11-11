@@ -11,14 +11,14 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 @XmlRootElement(name = "input")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InputData {
+public class InputDataDTO {
 
 	@NotEmpty
 	@XmlCDATA
 	private String dataForSort;
 
 	@NotNull
-	private SortOrderFields sortOrder;
+	private SortOrderFieldsDTO sortOrder;
 
 	@XmlPath("dataForSort/@configName")
 	private String configName;
@@ -39,11 +39,11 @@ public class InputData {
 		this.configName = configName;
 	}
 
-	public SortOrderFields getSortOrder() {
+	public SortOrderFieldsDTO getSortOrder() {
 		return sortOrder;
 	}
 
-	public void setSortOrder(SortOrderFields sortOrder) {
+	public void setSortOrder(SortOrderFieldsDTO sortOrder) {
 		this.sortOrder = sortOrder;
 	}
 

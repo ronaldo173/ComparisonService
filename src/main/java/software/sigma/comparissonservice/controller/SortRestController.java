@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import software.sigma.comparissonservice.exception.ApplicationException;
-import software.sigma.comparissonservice.protocol.InputData;
-import software.sigma.comparissonservice.protocol.Response;
+import software.sigma.comparissonservice.protocol.ConverterDtoVo;
+import software.sigma.comparissonservice.protocol.InputDataDTO;
+import software.sigma.comparissonservice.protocol.ResponseDTO;
 import software.sigma.comparissonservice.service.SortService;
+import software.sigma.comparissonservice.vo.InputDataVO;
+import software.sigma.comparissonservice.vo.ResponseVO;
 
 @RestController
 public class SortRestController {
@@ -25,9 +28,10 @@ public class SortRestController {
 	}
 
 	@RequestMapping(path = "/sort", method = RequestMethod.POST, produces = MediaType.APPLICATION_XML_VALUE)
-	public Response sortData(@Valid @RequestBody final InputData inputData) throws ApplicationException {
+	public ResponseDTO sortData(@Valid @RequestBody final InputDataDTO inputDataDto) throws ApplicationException {
 
-		Response response = new Response();
+		InputDataVO inputData = ConverterDtoVo.convert(inputDataDto);
+		ResponseVO response = new ResponseVO();
 
 		boolean isValidData = sortService.validateInputData(inputData, response);
 
@@ -37,6 +41,7 @@ public class SortRestController {
 		}
 
 		response.setSuccess(isValidData);
-		return response;
+		return ConverterDtoVo.convert(response);
 	}
+
 }

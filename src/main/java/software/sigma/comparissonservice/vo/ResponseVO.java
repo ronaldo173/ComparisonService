@@ -1,24 +1,16 @@
-package software.sigma.comparissonservice.protocol;
+package software.sigma.comparissonservice.vo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.eclipse.persistence.oxm.annotations.XmlCDATA;
-
 /**
- * Entity for representing response result.
+ * Value object for response.
  * 
  * @author alexandr.efimov
  *
  */
-@XmlRootElement(name = "response")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class Response {
+public class ResponseVO {
 
 	/**
 	 * Is success of something.
@@ -29,21 +21,20 @@ public class Response {
 	 */
 	private List<String> errors;
 
-	@XmlCDATA
 	private String sortedData;
 
 	private String informationMessage;
 
-	public Response() {
+	public ResponseVO() {
 		errors = new ArrayList<>();
 	}
 
-	public Response(boolean isSuccess, List<String> errors) {
+	public ResponseVO(boolean isSuccess, List<String> errors) {
 		this.isSuccess = isSuccess;
 		this.errors = errors;
 	}
 
-	public Response(boolean isSuccess, String error) {
+	public ResponseVO(boolean isSuccess, String error) {
 		this.isSuccess = isSuccess;
 		this.errors = Arrays.asList(error);
 	}

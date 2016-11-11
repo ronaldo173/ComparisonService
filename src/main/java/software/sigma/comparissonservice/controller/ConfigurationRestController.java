@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.model.Configuration;
-import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
-import software.sigma.comparissonservice.protocol.EntityList;
-import software.sigma.comparissonservice.protocol.Response;
+import software.sigma.comparissonservice.protocol.ConfigurationDTO;
+import software.sigma.comparissonservice.protocol.ConfigurationsDTO;
+import software.sigma.comparissonservice.protocol.ConverterDtoVo;
+import software.sigma.comparissonservice.protocol.ResponseDTO;
 import software.sigma.comparissonservice.service.ConfigurationService;
+import software.sigma.comparissonservice.vo.ConfigurationVO;
 
 /**
  * Rest controller responsible for mapping requests related to configurations.
@@ -54,11 +56,11 @@ public final class ConfigurationRestController {
 	 * @return list with objects of {@link Configuration} class
 	 */
 	@RequestMapping(path = "/configuration", produces = MediaType.APPLICATION_XML_VALUE)
-	public EntityList<ConfigurationProtocol> getAllConfigs() {
+	public ConfigurationsDTO getAllConfigs() {
 		LOGGER.debug("/configuration mapped");
-		List<ConfigurationProtocol> listConfigsProtocol = configService.getAll();
-		LOGGER.debug("/configuration amount of retrieved configs --> " + listConfigsProtocol.size());
-		return new EntityList<>(listConfigsProtocol);
+		List<ConfigurationVO> listConfigs = configService.getAll();
+		LOGGER.debug("/configuration amount of retrieved configs --> " + listConfigs.size());
+		return new ConfigurationsDTO(ConverterDtoVo.convert(listConfigs));
 	}
 
 	/**
@@ -71,27 +73,27 @@ public final class ConfigurationRestController {
 	 *             if can't get config
 	 */
 	@RequestMapping(path = "/configuration/{id}", produces = MediaType.APPLICATION_XML_VALUE)
-	public ConfigurationProtocol getConfiguration(@PathVariable("id") final Integer id) throws ApplicationException {
+	public ConfigurationDTO getConfiguration(@PathVariable("id") final Integer id) throws ApplicationException {
 		LOGGER.debug("/configuration/{id} get config by id -->" + id);
-		return configService.getById(id);
+		return ConverterDtoVo.convert(configService.getById(id));
 	}
 
 	/**
 	 * Save configuration, received from user in XML format.
 	 * 
-	 * @param configurationProtocol
+	 * @param configuration
 	 *            is config object from user
 	 * @return result of operation
 	 * @throws ApplicationException
 	 *             if can't save
 	 */
 	@RequestMapping(path = "/configuration", method = RequestMethod.POST, produces = MediaType.APPLICATION_XML_VALUE)
-	public Response saveConfiguration(@Valid @RequestBody final ConfigurationProtocol configurationProtocol)
+	public ResponseDTO saveConfiguration(@Valid @RequestBody final ConfigurationDTO configuration)
 			throws ApplicationException {
-		Response response = new Response();
+		ResponseDTO response = new ResponseDTO();
 
-		LOGGER.debug("/configuration POST get object for save: " + configurationProtocol);
-		boolean successSave = configService.save(configurationProtocol);
+		LOGGER.debug("/configuration POST get object for save: " + configuration);
+		boolean successSave = configService.save(ConverterDtoVo.convert(configuration));
 		response.setSuccess(successSave);
 		LOGGER.debug("Object saved success: " + successSave);
 		return response;
@@ -102,31 +104,40 @@ public final class ConfigurationRestController {
 	 * 
 	 * @param id
 	 *            is id of config for updating
-	 * @param configurationProtocol
+	 * @param configuration
 	 *            is updated object
 	 * @return result of operation
 	 * @throws ApplicationException
 	 *             if can't update
 	 */
 	@RequestMapping(path = "/configuration/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_XML_VALUE)
-	public Response updateConfiguration(@PathVariable("id") final Integer id,
-			@Valid @RequestBody final ConfigurationProtocol configurationProtocol) throws ApplicationException {
-		Response response = new Response();
+	public ResponseDTO updateConfiguration(@PathVariable("id") final Integer id,
+			@Valid @RequestBody final ConfigurationDTO configuration) throws ApplicationException {
+		ResponseDTO response = new ResponseDTO();
 
-		LOGGER.debug("/configuration PUT, id for update: " + id + "\n get object for update: "
-				+ configurationProtocol.getName());
-		configurationProtocol.setId(id);
+		LOGGER.debug(
+				"/configuration PUT, id for update: " + id + "\n get object for update: " + configuration.getName());
+		configuration.setId(id);
 
-		boolean successSave = configService.update(configurationProtocol);
+		boolean successSave = configService.update(ConverterDtoVo.convert(configuration));
 		response.setSuccess(successSave);
 
 		LOGGER.debug("Object updated success: " + successSave);
 		return response;
 	}
 
+	/**
+	 * Delete configuration by it id.
+	 * 
+	 * @param id
+	 *            is id of configuration
+	 * @return response
+	 * @throws ApplicationException
+	 *             if smth happened
+	 */
 	@RequestMapping(path = "/configuration/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_XML_VALUE)
-	public Response deleteConfiguration(@PathVariable("id") final Integer id) throws ApplicationException {
-		Response response = new Response();
+	public ResponseDTO deleteConfiguration(@PathVariable("id") final Integer id) throws ApplicationException {
+		ResponseDTO response = new ResponseDTO();
 
 		LOGGER.debug("/configuration DELETE, id for DELETE config: " + id);
 

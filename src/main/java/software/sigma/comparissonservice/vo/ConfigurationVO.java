@@ -1,38 +1,17 @@
-package software.sigma.comparissonservice.protocol;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.eclipse.persistence.oxm.annotations.XmlCDATA;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import software.sigma.comparissonservice.model.Configuration;
+package software.sigma.comparissonservice.vo;
 
 /**
- * Entity for representation {@link Configuration} in output format.
+ * VO for configuration.
  * 
  * @author alexandr.efimov
  *
  */
-@XmlRootElement(name = "configuration")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class ConfigurationProtocol {
+public class ConfigurationVO {
 
-	/**
-	 * Is id of configuration.
-	 */
 	private Integer id;
-	/**
-	 * Name of configuration.
-	 */
-	@NotEmpty
+
 	private String name;
-	/**
-	 * Configuration represented as byte array.
-	 */
-	@XmlCDATA
-	@NotEmpty
+
 	private String configContent;
 
 	public Integer getId() {
@@ -76,7 +55,7 @@ public class ConfigurationProtocol {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ConfigurationProtocol other = (ConfigurationProtocol) obj;
+		ConfigurationVO other = (ConfigurationVO) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -92,7 +71,7 @@ public class ConfigurationProtocol {
 
 	@Override
 	public String toString() {
-		return "ConfigurationProtocol [id=" + id + ", name=" + name + ", configContent=" + configContent + "]";
+		return "ConfigurationVO [id=" + id + ", name=" + name + ", configContent=" + configContent + "]";
 	}
 
 }

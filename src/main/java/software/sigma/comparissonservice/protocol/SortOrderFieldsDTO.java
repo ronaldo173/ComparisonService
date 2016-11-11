@@ -10,17 +10,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "sortOrder")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SortOrderFields {
+public class SortOrderFieldsDTO {
 
 	@NotNull
 	@XmlElement(name = "field")
-	private List<SortOrderField> fields;
+	private List<SortOrderFieldDTO> fields;
 
-	public List<SortOrderField> getFields() {
+	public List<SortOrderFieldDTO> getFields() {
 		return fields;
 	}
 
-	public void setFields(List<SortOrderField> fields) {
+	public void setFields(List<SortOrderFieldDTO> fields) {
 		this.fields = fields;
 	}
 

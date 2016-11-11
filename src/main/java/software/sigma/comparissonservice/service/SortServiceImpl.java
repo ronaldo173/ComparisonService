@@ -40,11 +40,10 @@ import org.xml.sax.SAXException;
 
 import software.sigma.comparissonservice.comparator.NodeComparatorByOrder;
 import software.sigma.comparissonservice.exception.ApplicationException;
-import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
-import software.sigma.comparissonservice.protocol.InputData;
-import software.sigma.comparissonservice.protocol.Response;
-import software.sigma.comparissonservice.protocol.SortOrderField;
-import software.sigma.comparissonservice.protocol.SortOrderFields;
+import software.sigma.comparissonservice.vo.ConfigurationVO;
+import software.sigma.comparissonservice.vo.InputDataVO;
+import software.sigma.comparissonservice.vo.ResponseVO;
+import software.sigma.comparissonservice.vo.SortOrderFieldVO;
 
 @Service
 public class SortServiceImpl implements SortService {
@@ -81,7 +80,7 @@ public class SortServiceImpl implements SortService {
 	 *            is object for adding information about validation
 	 * @return true if success
 	 */
-	final boolean validateXmlContentForSort(final InputData inputData, final Response response) {
+	final boolean validateXmlContentForSort(final InputDataVO inputData, final ResponseVO response) {
 		LOGGER.debug("Validate input data with objects to xsd.");
 
 		boolean isValid = false;
@@ -90,7 +89,7 @@ public class SortServiceImpl implements SortService {
 		String configName = inputData.getConfigName();
 		if (configName != null) {
 			LOGGER.debug("Try to find config by name, NAME --> " + configName);
-			ConfigurationProtocol configByName;
+			ConfigurationVO configByName;
 			try {
 				configByName = configService.getByName(configName);
 				isValid = isValidToConfig(dataForValidation, configByName.getConfigContent());
@@ -106,11 +105,11 @@ public class SortServiceImpl implements SortService {
 			}
 
 		} else {
-			List<ConfigurationProtocol> allConfigsIdentifiers = configService.getAll();
-			for (ConfigurationProtocol configProtocol : allConfigsIdentifiers) {
-				ConfigurationProtocol configById = null;
+			List<ConfigurationVO> allConfigsIdentifiers = configService.getAll();
+			for (ConfigurationVO config : allConfigsIdentifiers) {
+				ConfigurationVO configById = null;
 				try {
-					configById = configService.getById(configProtocol.getId());
+					configById = configService.getById(config.getId());
 				} catch (ApplicationException e) {
 					continue;
 				}
@@ -133,7 +132,7 @@ public class SortServiceImpl implements SortService {
 
 	/**
 	 * Check if {@link String xmlContent} valid according to
-	 * {@link ConfigurationProtocol xsd schema}.
+	 * {@link ConfigurationVO xsd schema}.
 	 * 
 	 * @param xmlContent
 	 *            is string with content of xml for validation
@@ -212,7 +211,7 @@ public class SortServiceImpl implements SortService {
 	}
 
 	@Override
-	public boolean validateInputData(final InputData inputData, Response response) {
+	public boolean validateInputData(final InputDataVO inputData, ResponseVO response) {
 		if (inputData == null || response == null) {
 			LOGGER.error("empty args for validation");
 			return false;
@@ -223,8 +222,7 @@ public class SortServiceImpl implements SortService {
 			LOGGER.debug("empty data for sort");
 			return false;
 		}
-		if (inputData.getSortOrder() == null || inputData.getSortOrder().getFields() == null
-				|| inputData.getSortOrder().getFields().isEmpty()) {
+		if (inputData.getSortOrder() == null || inputData.getSortOrder().isEmpty()) {
 			response.getErrors().add(ERR_MESSAGE_EMPTY_SORT_ORDER);
 			LOGGER.debug("empty sort order");
 			return false;
@@ -236,9 +234,6 @@ public class SortServiceImpl implements SortService {
 		boolean isValidDataForSort = validateXmlContentForSort(inputData, response);
 		LOGGER.debug("data for sort validation: " + isValidDataForSort);
 
-		/**
-		 * Check data for sort with sort order
-		 */
 		boolean isValidDataForSortToOrder = false;
 		try {
 			List<Node> listNodesForSort = getListNodesFromXmlContent(dataForSort);
@@ -257,7 +252,7 @@ public class SortServiceImpl implements SortService {
 	}
 
 	@Override
-	public String sort(final InputData inputData) throws ApplicationException {
+	public String sort(final InputDataVO inputData) throws ApplicationException {
 		if (inputData == null) {
 			throw new ApplicationException(ERR_MESSAGE_EMPTY_DATA);
 		}
@@ -283,10 +278,11 @@ public class SortServiceImpl implements SortService {
 	 *            is object with fields for converting
 	 * @return map with values
 	 */
-	private LinkedHashMap<String, String> getSortOrderMap(final SortOrderFields sortOrderFields) {
+	private LinkedHashMap<String, String> getSortOrderMap(final List<SortOrderFieldVO> sortOrderFields) {
+
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();
 
-		for (SortOrderField field : sortOrderFields.getFields()) {
+		for (SortOrderFieldVO field : sortOrderFields) {
 			if (field.getName() != null) {
 				map.put(field.getName(), field.getOrdering());
 			}
@@ -308,7 +304,7 @@ public class SortServiceImpl implements SortService {
 	 * @return true if valid
 	 */
 	private boolean validateXmlSortContentToSortOrder(final List<Node> listNodesForSort,
-			final LinkedHashMap<String, String> mapOrderNamesOrdering, final Response response) {
+			final LinkedHashMap<String, String> mapOrderNamesOrdering, final ResponseVO response) {
 		if (listNodesForSort.isEmpty()) {
 			response.getErrors().add("Not enough data for sorting");
 			return false;

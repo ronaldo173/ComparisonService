@@ -7,31 +7,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
- * List with entities of any type.
+ * List with configuration.
  * 
  * @author alexandr.efimov
  *
- * @param <T>
- *            is type of entity.
  */
 @XmlRootElement(name = "configurations")
-@XmlSeeAlso({ ConfigurationProtocol.class })
-public class EntityList<T> {
-	private List<T> list;
+@XmlSeeAlso({ ConfigurationDTO.class })
+public class ConfigurationsDTO {
+	private List<ConfigurationDTO> list;
 
-	public EntityList(List<T> list) {
+	public ConfigurationsDTO(List<ConfigurationDTO> list) {
 		this.list = list;
 	}
 
-	public EntityList() {
+	public ConfigurationsDTO() {
 	}
 
 	@XmlAnyElement
-	public List<T> getList() {
+	public List<ConfigurationDTO> getList() {
 		return list;
 	}
 
-	public void setList(List<T> list) {
+	public void setList(List<ConfigurationDTO> list) {
 		this.list = list;
 	}
 

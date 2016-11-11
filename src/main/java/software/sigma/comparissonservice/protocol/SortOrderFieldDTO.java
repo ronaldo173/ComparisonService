@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SortOrderField {
+public class SortOrderFieldDTO {
 
 	@NotEmpty
 	@XmlPath("@name")

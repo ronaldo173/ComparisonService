@@ -13,12 +13,11 @@ import org.mockito.Mockito;
 
 import software.sigma.comparissonservice.TestUtils;
 import software.sigma.comparissonservice.exception.ApplicationException;
-import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
-import software.sigma.comparissonservice.protocol.InputData;
-import software.sigma.comparissonservice.protocol.Response;
-import software.sigma.comparissonservice.protocol.SortOrderField;
-import software.sigma.comparissonservice.protocol.SortOrderFields;
 import software.sigma.comparissonservice.utils.CommonUtils;
+import software.sigma.comparissonservice.vo.ConfigurationVO;
+import software.sigma.comparissonservice.vo.InputDataVO;
+import software.sigma.comparissonservice.vo.ResponseVO;
+import software.sigma.comparissonservice.vo.SortOrderFieldVO;
 
 /**
  * Test sort service.
@@ -30,7 +29,7 @@ public class SortServiceImplTest {
 
 	private ConfigurationService configService;
 	private SortServiceImpl sortService;
-	private Response responseMock;
+	private ResponseVO responseMock;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -39,7 +38,7 @@ public class SortServiceImplTest {
 		sortService = new SortServiceImpl();
 		sortService.setConfigService(configService);
 
-		responseMock = Mockito.mock(Response.class);
+		responseMock = Mockito.mock(ResponseVO.class);
 	}
 
 	@Test
@@ -47,7 +46,7 @@ public class SortServiceImplTest {
 
 		String xmlContentCorrectForCheck = getValidDataForSortWithMockDao();
 
-		InputData inputData = new InputData();
+		InputDataVO inputData = new InputDataVO();
 		inputData.setDataForSort(xmlContentCorrectForCheck);
 		Assert.assertTrue(sortService.validateXmlContentForSort(inputData, responseMock));
 	}
@@ -59,14 +58,14 @@ public class SortServiceImplTest {
 				.getResource("/software/sigma/comparissonservice/resources/monitorsXmlForTest_VALID.xml");
 		String xmlContentCorrectForCheck = CommonUtils.readFileToString(urlFileXml.getFile());
 
-		List<ConfigurationProtocol> configProtocolsList = new ArrayList<>(TestUtils.getConfigProtocolsList());
+		List<ConfigurationVO> configProtocolsList = new ArrayList<>(TestUtils.getConfigProtocolsList());
 
 		when(configService.getAll()).thenReturn(configProtocolsList);
-		for (ConfigurationProtocol config : configProtocolsList) {
+		for (ConfigurationVO config : configProtocolsList) {
 			when(configService.getById(config.getId())).thenReturn(config);
 		}
 
-		InputData inputData = new InputData();
+		InputDataVO inputData = new InputDataVO();
 		inputData.setDataForSort(xmlContentCorrectForCheck);
 		Assert.assertFalse(sortService.validateXmlContentForSort(inputData, responseMock));
 	}
@@ -75,7 +74,7 @@ public class SortServiceImplTest {
 	public void testValidateInputDataShouldBeNotSuccessPassNullOrEmptyArgs() {
 
 		boolean isValidNullArg = sortService.validateInputData(null, null);
-		boolean isValidEmptyInputData = sortService.validateInputData(new InputData(), responseMock);
+		boolean isValidEmptyInputData = sortService.validateInputData(new InputDataVO(), responseMock);
 		Assert.assertFalse(isValidNullArg);
 		Assert.assertFalse(isValidEmptyInputData);
 	}
@@ -83,9 +82,9 @@ public class SortServiceImplTest {
 	@Test
 	public void testValidateInputDataShouldBeNotSuccessWrongSortOrder() throws ApplicationException {
 
-		InputData inputData = new InputData();
+		InputDataVO inputData = new InputDataVO();
 		inputData.setDataForSort(getValidDataForSortWithMockDao());
-		inputData.setSortOrder(new SortOrderFields());
+		inputData.setSortOrder(new ArrayList<SortOrderFieldVO>());
 		boolean validateInputData = sortService.validateInputData(inputData, responseMock);
 
 		Assert.assertFalse(validateInputData);
@@ -94,15 +93,14 @@ public class SortServiceImplTest {
 	@Test
 	public void testValidateInputDataShouldBeNotSuccessWrongFieldNamesInSortOrder() throws ApplicationException {
 
-		InputData inputData = new InputData();
+		InputDataVO inputData = new InputDataVO();
 		inputData.setDataForSort(getValidDataForSortWithMockDao());
 
-		SortOrderFields sortOrder = new SortOrderFields();
-		sortOrder.setFields(new ArrayList<SortOrderField>());
+		List<SortOrderFieldVO> sortOrder = new ArrayList<>();
 		for (int i = 0; i < 5; i++) {
-			SortOrderField fieldOfOrder = new SortOrderField();
+			SortOrderFieldVO fieldOfOrder = new SortOrderFieldVO();
 			fieldOfOrder.setName("name" + i);
-			sortOrder.getFields().add(fieldOfOrder);
+			sortOrder.add(fieldOfOrder);
 		}
 
 		inputData.setSortOrder(sortOrder);
@@ -114,14 +112,13 @@ public class SortServiceImplTest {
 
 	@Test
 	public void testValidationShouldBeSuccess() throws ApplicationException {
-		InputData inputData = new InputData();
+		InputDataVO inputData = new InputDataVO();
 		inputData.setDataForSort(getValidDataForSortWithMockDao());
 
-		SortOrderFields sortOrder = new SortOrderFields();
-		SortOrderField fieldOfOrder = new SortOrderField();
+		List<SortOrderFieldVO> sortOrder = new ArrayList<>();
+		SortOrderFieldVO fieldOfOrder = new SortOrderFieldVO();
 		fieldOfOrder.setName("diagonal");
-		sortOrder.setFields(new ArrayList<SortOrderField>());
-		sortOrder.getFields().add(fieldOfOrder);
+		sortOrder.add(fieldOfOrder);
 
 		inputData.setSortOrder(sortOrder);
 		boolean validateInputData = sortService.validateInputData(inputData, responseMock);
@@ -144,15 +141,15 @@ public class SortServiceImplTest {
 		String xmlContentCorrectForCheck = CommonUtils.readFileToString(urlFileXml.getFile());
 		String xsdValidSchemaForXml = CommonUtils.readFileToString(urlFileXsd.getFile());
 
-		List<ConfigurationProtocol> configProtocolsList = new ArrayList<>(TestUtils.getConfigProtocolsList());
-		ConfigurationProtocol correctConfig = new ConfigurationProtocol();
+		List<ConfigurationVO> configProtocolsList = new ArrayList<>(TestUtils.getConfigProtocolsList());
+		ConfigurationVO correctConfig = new ConfigurationVO();
 		correctConfig.setId(configProtocolsList.size() + 1);
 		correctConfig.setName("correctConfig");
 		correctConfig.setConfigContent(xsdValidSchemaForXml);
 		configProtocolsList.add(correctConfig);
 
 		when(configService.getAll()).thenReturn(configProtocolsList);
-		for (ConfigurationProtocol config : configProtocolsList) {
+		for (ConfigurationVO config : configProtocolsList) {
 			when(configService.getById(config.getId())).thenReturn(config);
 		}
 
@@ -163,7 +160,7 @@ public class SortServiceImplTest {
 	@Test
 	public void testSortShouldBeSuccess() throws ApplicationException {
 
-		InputData inputData = new InputData();
+		InputDataVO inputData = new InputDataVO();
 		inputData.setSortOrder(TestUtils.getValidSortOrder());
 		inputData.setDataForSort(getValidDataForSortWithMockDao());
 
@@ -176,7 +173,7 @@ public class SortServiceImplTest {
 	@Test(expected = ApplicationException.class)
 	public void testSortShouldBeExceptionWrongData() throws ApplicationException {
 
-		InputData inputData = new InputData();
+		InputDataVO inputData = new InputDataVO();
 		inputData.setSortOrder(TestUtils.getValidSortOrder());
 		inputData.setDataForSort("smth not valid");
 

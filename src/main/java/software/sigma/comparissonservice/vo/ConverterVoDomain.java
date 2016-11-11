@@ -1,33 +1,32 @@
-package software.sigma.comparissonservice.utils;
+package software.sigma.comparissonservice.vo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import software.sigma.comparissonservice.model.Configuration;
-import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
 
 /**
  * Helper class for work with configuration objects.Convert
- * {@link Configuration} object to {@link ConfigurationProtocol} object and vice
+ * {@link Configuration} object to {@link ConfigurationVO} object and vice
  * versa. Not for creating, use static method.
  * 
  * @author alexandr.efimov
  *
  */
-public final class ConfigurationsConverter {
+public final class ConverterVoDomain {
 
 	/**
-	 * Convert {@link Configuration} to {@link ConfigurationProtocol}.
+	 * Convert {@link Configuration} to {@link ConfigurationVO}.
 	 * 
 	 * @param source
 	 *            is source object
 	 * @return is result object
 	 */
-	public static ConfigurationProtocol convert(final Configuration source) {
+	public static ConfigurationVO convert(final Configuration source) {
 
-		ConfigurationProtocol configurationProtocol = null;
+		ConfigurationVO configurationProtocol = null;
 		if (source != null) {
-			configurationProtocol = new ConfigurationProtocol();
+			configurationProtocol = new ConfigurationVO();
 			configurationProtocol.setId(source.getId());
 			configurationProtocol.setName(source.getName());
 			configurationProtocol.setConfigContent(source.getConfigContent());
@@ -37,13 +36,13 @@ public final class ConfigurationsConverter {
 	}
 
 	/**
-	 * Convert {@link ConfigurationProtocol} to {@link Configuration}.
+	 * Convert {@link ConfigurationVO} to {@link Configuration}.
 	 * 
 	 * @param source
 	 *            is source object
 	 * @return is result object
 	 */
-	public static Configuration convert(final ConfigurationProtocol source) {
+	public static Configuration convert(final ConfigurationVO source) {
 
 		Configuration configuration = null;
 		if (source != null) {
@@ -57,18 +56,18 @@ public final class ConfigurationsConverter {
 	}
 
 	/**
-	 * Convert List with {@link Configuration} to {@link ConfigurationProtocol}.
+	 * Convert List with {@link Configuration} to {@link ConfigurationVO}.
 	 * 
 	 * @param configurations
 	 *            is source list
 	 * @return list with results
 	 */
-	public static List<ConfigurationProtocol> convertToProtocolList(final List<Configuration> configurations) {
-		List<ConfigurationProtocol> listResults = new ArrayList<>();
+	public static List<ConfigurationVO> convertToProtocolList(final List<Configuration> configurations) {
+		List<ConfigurationVO> listResults = new ArrayList<>();
 		if (configurations != null) {
 
 			for (Configuration configuration : configurations) {
-				ConfigurationProtocol configProtocol = convert(configuration);
+				ConfigurationVO configProtocol = convert(configuration);
 				listResults.add(configProtocol);
 			}
 		}
@@ -79,7 +78,7 @@ public final class ConfigurationsConverter {
 	/**
 	 * Until class, not for creating - use static methods.
 	 */
-	private ConfigurationsConverter() {
+	private ConverterVoDomain() {
 		throw new IllegalAccessError();
 	}
 

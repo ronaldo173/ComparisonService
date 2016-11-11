@@ -14,8 +14,8 @@ import org.xml.sax.SAXException;
 import software.sigma.comparissonservice.dao.ConfigurationDao;
 import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.model.Configuration;
-import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
-import software.sigma.comparissonservice.utils.ConfigurationsConverter;
+import software.sigma.comparissonservice.vo.ConfigurationVO;
+import software.sigma.comparissonservice.vo.ConverterVoDomain;
 
 /**
  * Implementation of {@link ConfigurationService} for work with
@@ -42,26 +42,26 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public List<ConfigurationProtocol> getAll() {
+	public List<ConfigurationVO> getAll() {
 		List<Configuration> configurations = dao.getAll();
-		return ConfigurationsConverter.convertToProtocolList(configurations);
+		return ConverterVoDomain.convertToProtocolList(configurations);
 	}
 
 	@Override
-	public ConfigurationProtocol getById(final int id) throws ApplicationException {
+	public ConfigurationVO getById(final int id) throws ApplicationException {
 		Configuration configById = dao.getById(id);
 		if (configById == null) {
 			throw new ApplicationException(ERR_MESSAGE_NOT_FOUND_CONFIG_BY_ID + id);
 		}
-		return ConfigurationsConverter.convert(configById);
+		return ConverterVoDomain.convert(configById);
 	}
 
 	@Override
-	public boolean save(final ConfigurationProtocol configuration) throws ApplicationException {
+	public boolean save(final ConfigurationVO configuration) throws ApplicationException {
 		boolean saveSuccess = false;
 
 		if (validateConfigContent(configuration.getConfigContent())) {
-			saveSuccess = dao.save(ConfigurationsConverter.convert(configuration));
+			saveSuccess = dao.save(ConverterVoDomain.convert(configuration));
 		} else {
 			throw new ApplicationException(ERR_MESSAGE_NOT_VALID_CONFIG_CONTENT);
 		}
@@ -69,14 +69,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public boolean update(final ConfigurationProtocol configurationProtocol) throws ApplicationException {
+	public boolean update(final ConfigurationVO configurationProtocol) throws ApplicationException {
 		boolean updateSuccess = false;
 
 		String configContent = configurationProtocol.getConfigContent();
 		if (validateConfigContent(configContent)) {
 			try {
 
-				updateSuccess = dao.update(ConfigurationsConverter.convert(configurationProtocol));
+				updateSuccess = dao.update(ConverterVoDomain.convert(configurationProtocol));
 			} catch (Throwable e) {
 				String errMessage = ERR_MESSAGE_CANT_UPDATE_CONFIG + configurationProtocol.getId();
 				if (e.getCause() != null) {
@@ -125,7 +125,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public ConfigurationProtocol getByName(final String name) throws ApplicationException {
+	public ConfigurationVO getByName(final String name) throws ApplicationException {
 
 		Configuration configByName;
 		try {
@@ -134,7 +134,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			throw new ApplicationException(ERR_MESSAGE_NOT_FOUND_CONFIG_BY_NAME + name, e);
 		}
 
-		return ConfigurationsConverter.convert(configByName);
+		return ConverterVoDomain.convert(configByName);
 	}
 
 }

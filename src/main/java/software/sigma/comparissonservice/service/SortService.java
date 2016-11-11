@@ -1,8 +1,8 @@
 package software.sigma.comparissonservice.service;
 
 import software.sigma.comparissonservice.exception.ApplicationException;
-import software.sigma.comparissonservice.protocol.InputData;
-import software.sigma.comparissonservice.protocol.Response;
+import software.sigma.comparissonservice.vo.InputDataVO;
+import software.sigma.comparissonservice.vo.ResponseVO;
 
 public interface SortService {
 
@@ -12,11 +12,11 @@ public interface SortService {
 	 * @param inputData
 	 *            object with input data
 	 * @param response
-	 *            is {@link Response} object for adding error messages about
+	 *            is {@link ResponseVO} object for adding error messages about
 	 *            validation if smth not valid
 	 * @return true if input data is valid
 	 */
-	boolean validateInputData(InputData inputData, Response response);
+	boolean validateInputData(InputDataVO inputData, ResponseVO response);
 
 	/**
 	 * Sort input data according to content of input object. Before sorting data
@@ -28,6 +28,6 @@ public interface SortService {
 	 *             if smth happened
 	 * @return string with sorted information inside
 	 */
-	String sort(InputData inputData) throws ApplicationException;
+	String sort(InputDataVO inputData) throws ApplicationException;
 
 }

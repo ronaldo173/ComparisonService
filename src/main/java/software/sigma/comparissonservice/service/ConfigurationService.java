@@ -3,7 +3,7 @@ package software.sigma.comparissonservice.service;
 import java.util.List;
 
 import software.sigma.comparissonservice.exception.ApplicationException;
-import software.sigma.comparissonservice.protocol.ConfigurationProtocol;
+import software.sigma.comparissonservice.vo.ConfigurationVO;
 
 /**
  * Configuration service with business operations.
@@ -18,7 +18,7 @@ public interface ConfigurationService {
 	 * 
 	 * @return list with objects
 	 */
-	List<ConfigurationProtocol> getAll();
+	List<ConfigurationVO> getAll();
 
 	/**
 	 * Get configuration by id.
@@ -29,7 +29,7 @@ public interface ConfigurationService {
 	 * @throws ApplicationException
 	 *             if can't get with reason in message
 	 */
-	ConfigurationProtocol getById(int id) throws ApplicationException;
+	ConfigurationVO getById(int id) throws ApplicationException;
 
 	/**
 	 * Get configuration by it's name.
@@ -40,7 +40,7 @@ public interface ConfigurationService {
 	 * @throws ApplicationException
 	 *             if can't get with reason in message
 	 */
-	ConfigurationProtocol getByName(String name) throws ApplicationException;
+	ConfigurationVO getByName(String name) throws ApplicationException;
 
 	/**
 	 * Save configuration to storage.
@@ -51,7 +51,7 @@ public interface ConfigurationService {
 	 * @throws ApplicationException
 	 *             if can't save object
 	 */
-	boolean save(ConfigurationProtocol configuration) throws ApplicationException;
+	boolean save(ConfigurationVO configuration) throws ApplicationException;
 
 	/**
 	 * Update configuration in storage, criteria for update - id of
@@ -63,7 +63,7 @@ public interface ConfigurationService {
 	 * @throws ApplicationException
 	 *             if can't update object
 	 */
-	boolean update(ConfigurationProtocol configurationProtocol) throws ApplicationException;
+	boolean update(ConfigurationVO configurationProtocol) throws ApplicationException;
 
 	/**
 	 * Delete configuration by id.
