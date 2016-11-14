@@ -24,15 +24,15 @@ public final class ConverterVoDomain {
 	 */
 	public static ConfigurationVO convert(final Configuration source) {
 
-		ConfigurationVO configurationProtocol = null;
+		ConfigurationVO configurationVo = null;
 		if (source != null) {
-			configurationProtocol = new ConfigurationVO();
-			configurationProtocol.setId(source.getId());
-			configurationProtocol.setName(source.getName());
-			configurationProtocol.setConfigContent(source.getConfigContent());
+			configurationVo = new ConfigurationVO();
+			configurationVo.setId(source.getId());
+			configurationVo.setName(source.getName());
+			configurationVo.setConfigContent(source.getConfigContent());
 		}
 
-		return configurationProtocol;
+		return configurationVo;
 	}
 
 	/**
@@ -56,7 +56,8 @@ public final class ConverterVoDomain {
 	}
 
 	/**
-	 * Convert List with {@link Configuration} to {@link ConfigurationVO}.
+	 * Convert List with {@link Configuration} to list
+	 * with{@link ConfigurationVO}.
 	 * 
 	 * @param configurations
 	 *            is source list
@@ -67,8 +68,8 @@ public final class ConverterVoDomain {
 		if (configurations != null) {
 
 			for (Configuration configuration : configurations) {
-				ConfigurationVO configProtocol = convert(configuration);
-				listResults.add(configProtocol);
+				ConfigurationVO configVo = convert(configuration);
+				listResults.add(configVo);
 			}
 		}
 

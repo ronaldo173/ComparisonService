@@ -188,8 +188,7 @@ public class SortServiceImpl implements SortService {
 					XPathConstants.NODESET);
 			resultList = convertNodeListToList(nodeList);
 		} catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException e) {
-			LOGGER.debug("Can't parse xml to list with nodes", e);
-			throw new ApplicationException(e.getMessage());
+			throw new ApplicationException("Can't parse xml content to nodes for sort", e);
 		}
 
 		return resultList;
@@ -315,6 +314,9 @@ public class SortServiceImpl implements SortService {
 		try {
 			for (Node node : listNodesForSort) {
 				for (String fieldName : mapOrderNamesOrdering.keySet()) {
+					if (counterFieldNamesInDataForSort > 0) {
+						return true;
+					}
 
 					Node nodeByFieldName = (Node) xPath.compile(fieldName).evaluate(node, XPathConstants.NODE);
 					if (nodeByFieldName != null) {
@@ -341,7 +343,7 @@ public class SortServiceImpl implements SortService {
 	 * @param listNodesForSort
 	 * @return
 	 */
-	private String convertListNodesToStringXml(List<Node> listNodesForSort) {
+	private String convertListNodesToStringXml(final List<Node> listNodesForSort) {
 		String result = "";
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {

@@ -1,5 +1,6 @@
 package software.sigma.comparissonservice.comparator;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,8 +25,9 @@ import org.w3c.dom.Node;
  * @author alexandr.efimov
  *
  */
-public class NodeComparatorByOrder implements Comparator<Node> {
+public class NodeComparatorByOrder implements Comparator<Node>, Serializable {
 
+	private static final long serialVersionUID = -8860004823204427025L;
 	/**
 	 * Name of param for ascending type of sorting.
 	 */

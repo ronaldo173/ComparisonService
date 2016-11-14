@@ -57,13 +57,13 @@ public interface ConfigurationService {
 	 * Update configuration in storage, criteria for update - id of
 	 * configuration.
 	 * 
-	 * @param configurationProtocol
+	 * @param configurationVo
 	 *            is updated object
 	 * @return true if success, else - false(if id is null also)
 	 * @throws ApplicationException
 	 *             if can't update object
 	 */
-	boolean update(ConfigurationVO configurationProtocol) throws ApplicationException;
+	boolean update(ConfigurationVO configurationVo) throws ApplicationException;
 
 	/**
 	 * Delete configuration by id.

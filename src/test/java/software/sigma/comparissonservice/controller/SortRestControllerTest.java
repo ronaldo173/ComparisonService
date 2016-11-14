@@ -81,7 +81,7 @@ public class SortRestControllerTest {
 		byte[] contentInputObject = xmlValueOfInput.getBytes(Charset.forName(ENCODING));
 
 		Mockito.when(sortService.validateInputData((InputDataVO) Mockito.any(), (ResponseVO) Mockito.any()))
-				.thenReturn(new Boolean(true));
+				.thenReturn(Boolean.valueOf(true));
 		Mockito.when(sortService.sort((InputDataVO) Mockito.any())).thenCallRealMethod();
 
 		mockMvc.perform(post(URL_PREFIX + "sort/").contentType(MediaType.APPLICATION_XML).content(contentInputObject)
@@ -98,7 +98,7 @@ public class SortRestControllerTest {
 		byte[] contentInputObject = xmlValueOfInput.getBytes(Charset.forName(ENCODING));
 
 		Mockito.when(sortService.validateInputData((InputDataVO) Mockito.any(), (ResponseVO) Mockito.any()))
-				.thenReturn(new Boolean(false));
+				.thenReturn(Boolean.FALSE);
 		Mockito.when(sortService.sort((InputDataVO) Mockito.any())).thenCallRealMethod();
 
 		mockMvc.perform(post(URL_PREFIX + "sort/").contentType(MediaType.APPLICATION_XML).content(contentInputObject)

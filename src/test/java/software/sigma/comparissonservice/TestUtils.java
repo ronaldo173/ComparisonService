@@ -39,14 +39,14 @@ public final class TestUtils {
 	 * Check if content of objects equal.
 	 * 
 	 * @param configuration
-	 * @param configurationProtocol
+	 * @param configurationVo
 	 * @return result of check, true - equals
 	 */
 	public static boolean isConfigurationAndDtoConfigEquals(final Configuration configuration,
-			final ConfigurationVO configurationProtocol) {
-		ConfigurationVO configConvertedToProtocol = ConverterVoDomain.convert(configuration);
+			final ConfigurationVO configurationVo) {
+		ConfigurationVO configConvertedToVo = ConverterVoDomain.convert(configuration);
 
-		return configConvertedToProtocol.equals(configurationProtocol);
+		return configConvertedToVo.equals(configurationVo);
 	}
 
 	/**

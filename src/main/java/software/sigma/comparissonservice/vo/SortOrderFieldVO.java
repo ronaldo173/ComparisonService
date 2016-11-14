@@ -6,6 +6,21 @@ public class SortOrderFieldVO {
 
 	private String ordering;
 
+	public SortOrderFieldVO() {
+		super();
+	}
+
+	public SortOrderFieldVO(String name) {
+		super();
+		this.name = name;
+	}
+
+	public SortOrderFieldVO(String name, String ordering) {
+		super();
+		this.name = name;
+		this.ordering = ordering;
+	}
+
 	public String getName() {
 		return name;
 	}

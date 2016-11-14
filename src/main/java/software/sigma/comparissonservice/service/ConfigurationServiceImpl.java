@@ -69,16 +69,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public boolean update(final ConfigurationVO configurationProtocol) throws ApplicationException {
+	public boolean update(final ConfigurationVO configurationVo) throws ApplicationException {
 		boolean updateSuccess = false;
 
-		String configContent = configurationProtocol.getConfigContent();
+		String configContent = configurationVo.getConfigContent();
 		if (validateConfigContent(configContent)) {
 			try {
 
-				updateSuccess = dao.update(ConverterVoDomain.convert(configurationProtocol));
+				updateSuccess = dao.update(ConverterVoDomain.convert(configurationVo));
 			} catch (Throwable e) {
-				String errMessage = ERR_MESSAGE_CANT_UPDATE_CONFIG + configurationProtocol.getId();
+				String errMessage = ERR_MESSAGE_CANT_UPDATE_CONFIG + configurationVo.getId();
 				if (e.getCause() != null) {
 					errMessage += ", " + e.getCause().getMessage();
 				}
