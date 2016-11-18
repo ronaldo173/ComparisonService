@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<monitors>
+	<monitor>
+		<model>BENQ 24k17500</model>
+		<diagonal>24</diagonal>
+		<brightness>250</brightness>
+		<resolution>1920x1080</resolution>
+		<price>7500</price>
+	</monitor>
+	<monitor>
+		<model>Philips 225v50z</model>
+		<diagonal>22</diagonal>
+		<brightness>250</brightness>
+		<resolution>1920x1080</resolution>
+		<price>4000</price>
+	</monitor>
+	<monitor>
+		<model>LG 25um58</model>
+		<diagonal>25</diagonal>
+		<brightness>250</brightness>
+		<resolution>2560x1080</resolution>
+		<price>4950</price>
+	</monitor>
+</monitors>

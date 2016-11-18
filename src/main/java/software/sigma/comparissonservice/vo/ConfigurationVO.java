@@ -1,24 +1,17 @@
-package software.sigma.comparissonservice.model;
+package software.sigma.comparissonservice.vo;
 
 /**
- * Entity for configuration.
+ * VO for configuration.
  * 
  * @author alexandr.efimov
  *
  */
-public class Configuration {
+public class ConfigurationVO {
 
-	/**
-	 * Is id of configuration.
-	 */
 	private Integer id;
-	/**
-	 * Name of configuration.
-	 */
+
 	private String name;
-	/**
-	 * Configuration represented as byte array.
-	 */
+
 	private String configContent;
 
 	public Integer getId() {
@@ -46,15 +39,9 @@ public class Configuration {
 	}
 
 	@Override
-	public String toString() {
-		return "Configuration [id=" + id + ", name=" + name + ", configContent=" + configContent + "]";
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((configContent == null) ? 0 : configContent.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
@@ -68,12 +55,7 @@ public class Configuration {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Configuration other = (Configuration) obj;
-		if (configContent == null) {
-			if (other.configContent != null)
-				return false;
-		} else if (!configContent.equals(other.configContent))
-			return false;
+		ConfigurationVO other = (ConfigurationVO) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -85,6 +67,11 @@ public class Configuration {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "ConfigurationVO [id=" + id + ", name=" + name + ", configContent=" + configContent + "]";
 	}
 
 }

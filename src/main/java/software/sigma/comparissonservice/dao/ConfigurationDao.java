@@ -1,36 +1,68 @@
 package software.sigma.comparissonservice.dao;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 
 import software.sigma.comparissonservice.model.Configuration;
 
-@Component
-public class ConfigurationDao {
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+/**
+ * 
+ * Interface for a Data Access Object that can be used for a
+ * {@link Configuration} objects.
+ * 
+ * @author alexandr.efimov
+ *
+ */
+public interface ConfigurationDao {
+	/**
+	 * Save configuration in storage.
+	 * 
+	 * @param configuration
+	 *            is object for saving
+	 * @return true if operation finished successful, false if not
+	 */
+	boolean save(Configuration configuration);
 
-	public List<Configuration> getAll() {
-		List<Configuration> configurations = new ArrayList<>();
+	/**
+	 * Get configuration by it's id.
+	 * 
+	 * @param id
+	 *            is id of object
+	 * @return found object by id or null if not exist with id
+	 */
+	Configuration getById(int id);
 
-		String sql = "SELECT * FROM configuration";
+	/**
+	 * Get all configurations.
+	 * 
+	 * @return {@link List} with configurations
+	 */
+	List<Configuration> getAll();
 
-		List<Map<String, Object>> queryForList = jdbcTemplate.queryForList(sql);
-		for (Map<String, Object> row : queryForList) {
-			Configuration configuration = new Configuration();
-			configuration.setId(Integer.parseInt(String.valueOf(row.get("id"))));
-			configuration.setName((String) row.get("name"));
-			configuration.setConfiguration((byte[]) row.get("configuration_schema"));
+	/**
+	 * Update configuration.
+	 * 
+	 * @param configuration
+	 *            is updated object
+	 * @return true if successful
+	 */
+	boolean update(Configuration configuration);
 
-			configurations.add(configuration);
-		}
+	/**
+	 * Delete configuration by id.
+	 * 
+	 * @param id
+	 *            is id of configuration
+	 * @return true if successful
+	 */
+	boolean delete(int id);
 
-		return configurations;
-	}
+	/**
+	 * Get configuration by it's name.
+	 * 
+	 * @param name
+	 *            is name of config
+	 * @return found object by name or null if not exist with id
+	 */
+	Configuration getByName(String name);
 
 }
