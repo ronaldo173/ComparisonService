@@ -27,8 +27,8 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<outputEncoding>UTF-8</outputEncoding>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>7</source>
+					<target>7</target>
 				</configuration>
 				<executions>
 					<execution>
@@ -102,6 +102,7 @@
 			<artifactId>eclipselink</artifactId>
 			<version>2.6.3</version>
 		</dependency>
+
 
 	</dependencies>
 </project>
