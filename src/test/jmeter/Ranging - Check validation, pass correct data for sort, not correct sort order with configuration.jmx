@@ -48,7 +48,7 @@
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">100</stringProp>
+          <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">1</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
@@ -83,7 +83,7 @@
           <XPathExtractor guiclass="XPathExtractorGui" testclass="XPathExtractor" testname="XPath Extractor-get var with existing id(var - existingIdOfConfig)" enabled="true">
             <stringProp name="XPathExtractor.default"></stringProp>
             <stringProp name="XPathExtractor.refname">existingIdOfConfig</stringProp>
-            <stringProp name="XPathExtractor.xpathQuery">configurations/configuration[last()]/id</stringProp>
+            <stringProp name="XPathExtractor.xpathQuery">configurations/configuration[last()-1]/id</stringProp>
             <boolProp name="XPathExtractor.validate">false</boolProp>
             <boolProp name="XPathExtractor.tolerant">false</boolProp>
             <boolProp name="XPathExtractor.namespace">false</boolProp>
@@ -97,7 +97,7 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">&lt;configuration&gt;  &#xd;
-    &lt;name&gt;configuration_for_test_must_be_unique_name&lt;/name&gt;&#xd;
+    &lt;name&gt;configuration_for_test_must_be_unique_name1&lt;/name&gt;&#xd;
     &lt;configContent&gt;&lt;![CDATA[&#xd;
 &lt;xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&#xd;
     &lt;xs:element name=&quot;monitors&quot; /&gt;&#xd;
