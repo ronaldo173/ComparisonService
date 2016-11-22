@@ -16,6 +16,13 @@ import software.sigma.comparissonservice.model.Configuration;
 public final class ConverterVoDomain {
 
 	/**
+	 * Until class, not for creating - use static methods.
+	 */
+	private ConverterVoDomain() {
+		throw new IllegalAccessError();
+	}
+
+	/**
 	 * Convert {@link Configuration} to {@link ConfigurationVO}.
 	 * 
 	 * @param source
@@ -74,13 +81,6 @@ public final class ConverterVoDomain {
 		}
 
 		return listResults;
-	}
-
-	/**
-	 * Until class, not for creating - use static methods.
-	 */
-	private ConverterVoDomain() {
-		throw new IllegalAccessError();
 	}
 
 }

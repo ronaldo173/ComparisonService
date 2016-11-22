@@ -7,6 +7,7 @@ import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
@@ -34,6 +35,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	private static final String ERR_MESSAGE_NOT_FOUND_CONFIG_BY_NAME = "Configuration with your name not exists! Name: ";
 	private static final String ERR_MESSAGE_CANT_UPDATE_CONFIG = "Can't update configuration. Id: ";
 
+	private static final Logger LOGGER = Logger.getLogger(ConfigurationServiceImpl.class);
+
 	@Autowired
 	private ConfigurationDao dao;
 
@@ -58,7 +61,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	@Override
 	public boolean save(final ConfigurationVO configuration) throws ApplicationException {
-		boolean saveSuccess = false;
+		boolean saveSuccess;
 
 		if (validateConfigContent(configuration.getConfigContent())) {
 			saveSuccess = dao.save(ConverterVoDomain.convert(configuration));
@@ -70,14 +73,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	@Override
 	public boolean update(final ConfigurationVO configurationVo) throws ApplicationException {
-		boolean updateSuccess = false;
+		boolean updateSuccess;
 
 		String configContent = configurationVo.getConfigContent();
 		if (validateConfigContent(configContent)) {
 			try {
 
 				updateSuccess = dao.update(ConverterVoDomain.convert(configurationVo));
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				String errMessage = ERR_MESSAGE_CANT_UPDATE_CONFIG + configurationVo.getId();
 				if (e.getCause() != null) {
 					errMessage += ", " + e.getCause().getMessage();
@@ -107,6 +110,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		try {
 			factory.newSchema(new StreamSource(new StringReader(configContent.trim())));
 		} catch (SAXException e) {
+			LOGGER.trace(e.getMessage(), e);
 			isValid = false;
 		}
 		return isValid;
@@ -117,7 +121,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		boolean deleteSuccess = false;
 		try {
 			deleteSuccess = dao.delete(id);
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			throw new ApplicationException("Can't delete configuration. Id: " + id, e);
 		}
 
@@ -130,7 +134,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		Configuration configByName;
 		try {
 			configByName = dao.getByName(name);
-		} catch (Throwable e) {
+		} catch (Throwable e) {// NOSONAR
 			throw new ApplicationException(ERR_MESSAGE_NOT_FOUND_CONFIG_BY_NAME + name, e);
 		}
 

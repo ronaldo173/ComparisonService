@@ -17,6 +17,12 @@ import software.sigma.comparissonservice.service.SortService;
 import software.sigma.comparissonservice.vo.InputDataVO;
 import software.sigma.comparissonservice.vo.ResponseVO;
 
+/**
+ * Controller for mapping requests and sending responses to user.
+ * 
+ * @author alexandr.efimov
+ *
+ */
 @RestController
 public class SortRestController {
 
@@ -27,6 +33,15 @@ public class SortRestController {
 		this.sortService = sortService;
 	}
 
+	/**
+	 * Request for sorting data.
+	 * 
+	 * @param inputDataDto
+	 *            is input object with data
+	 * @return response with results
+	 * @throws ApplicationException
+	 *             if smth happened
+	 */
 	@RequestMapping(path = "/sort", method = RequestMethod.POST, produces = MediaType.APPLICATION_XML_VALUE)
 	public ResponseDTO sortData(@Valid @RequestBody final InputDataDTO inputDataDto) throws ApplicationException {
 

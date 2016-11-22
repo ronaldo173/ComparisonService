@@ -16,6 +16,17 @@ import software.sigma.comparissonservice.vo.SortOrderFieldVO;
  */
 public final class ConverterDtoVo {
 
+	private ConverterDtoVo() {
+		throw new IllegalAccessError("Not for creating use static methods.");
+	}
+
+	/**
+	 * Convert VO to DTO.
+	 * 
+	 * @param response
+	 *            is VO object
+	 * @return DTO
+	 */
 	public static ResponseDTO convert(final ResponseVO response) {
 
 		ResponseDTO responseDTO = new ResponseDTO();
@@ -26,6 +37,13 @@ public final class ConverterDtoVo {
 		return responseDTO;
 	}
 
+	/**
+	 * Convert DTO to VO .
+	 * 
+	 * @param inputDataDto
+	 *            is DTO object
+	 * @return VO object
+	 */
 	public static InputDataVO convert(final InputDataDTO inputDataDto) {
 
 		InputDataVO inputDataVO = new InputDataVO();
@@ -39,6 +57,13 @@ public final class ConverterDtoVo {
 		return inputDataVO;
 	}
 
+	/**
+	 * Convert DTO to VO .
+	 * 
+	 * @param fieldDto
+	 *            is DTO
+	 * @return VO object
+	 */
 	public static SortOrderFieldVO convert(SortOrderFieldDTO fieldDto) {
 		SortOrderFieldVO sortOrderFieldVO = new SortOrderFieldVO();
 		sortOrderFieldVO.setName(fieldDto.getName());
@@ -47,6 +72,13 @@ public final class ConverterDtoVo {
 		return sortOrderFieldVO;
 	}
 
+	/**
+	 * Convert DTO to VO .
+	 * 
+	 * @param configuration
+	 *            is DTO
+	 * @return VO object
+	 */
 	public static ConfigurationVO convert(ConfigurationDTO configuration) {
 		ConfigurationVO configurationVO = new ConfigurationVO();
 		configurationVO.setId(configuration.getId());
@@ -55,6 +87,13 @@ public final class ConverterDtoVo {
 		return configurationVO;
 	}
 
+	/**
+	 * Convert VO to DTO.
+	 * 
+	 * @param configuration
+	 *            is VO object
+	 * @return DTO
+	 */
 	public static ConfigurationDTO convert(ConfigurationVO configuration) {
 		ConfigurationDTO configurationDTO = new ConfigurationDTO();
 		configurationDTO.setId(configuration.getId());
@@ -63,6 +102,13 @@ public final class ConverterDtoVo {
 		return configurationDTO;
 	}
 
+	/**
+	 * Convert list with VO to list with DTO.
+	 * 
+	 * @param listConfigsVo
+	 *            is VO list for convert
+	 * @return list with DTO
+	 */
 	public static List<ConfigurationDTO> convert(List<ConfigurationVO> listConfigsVo) {
 
 		List<ConfigurationDTO> list = new ArrayList<>();

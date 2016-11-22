@@ -34,15 +34,34 @@ public class ResponseDTO {
 
 	private String informationMessage;
 
+	/**
+	 * Create DTO.
+	 */
 	public ResponseDTO() {
 		errors = new ArrayList<>();
 	}
 
+	/**
+	 * Create response dto using parameters.
+	 * 
+	 * @param isSuccess
+	 *            is success value
+	 * @param errors
+	 *            is list with errors
+	 */
 	public ResponseDTO(boolean isSuccess, List<String> errors) {
 		this.isSuccess = isSuccess;
 		this.errors = errors;
 	}
 
+	/**
+	 * Create response VO using parameters.
+	 * 
+	 * @param isSuccess
+	 *            is success value
+	 * @param error
+	 *            is error in string format
+	 */
 	public ResponseDTO(boolean isSuccess, String error) {
 		this.isSuccess = isSuccess;
 		this.errors = Arrays.asList(error);

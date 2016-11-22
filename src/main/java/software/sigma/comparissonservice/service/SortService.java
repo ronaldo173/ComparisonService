@@ -4,6 +4,12 @@ import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.vo.InputDataVO;
 import software.sigma.comparissonservice.vo.ResponseVO;
 
+/**
+ * Service connected to sortings.
+ * 
+ * @author alexandr.efimov
+ *
+ */
 public interface SortService {
 
 	/**

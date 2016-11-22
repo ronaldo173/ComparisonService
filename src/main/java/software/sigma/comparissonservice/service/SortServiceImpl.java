@@ -45,6 +45,12 @@ import software.sigma.comparissonservice.vo.InputDataVO;
 import software.sigma.comparissonservice.vo.ResponseVO;
 import software.sigma.comparissonservice.vo.SortOrderFieldVO;
 
+/**
+ * Implementation of {@link SortService} for work with sort features.
+ * 
+ * @author alexandr.efimov
+ *
+ */
 @Service
 public class SortServiceImpl implements SortService {
 
@@ -106,11 +112,12 @@ public class SortServiceImpl implements SortService {
 
 		} else {
 			List<ConfigurationVO> allConfigsIdentifiers = configService.getAll();
-			for (ConfigurationVO config : allConfigsIdentifiers) {
+			for (ConfigurationVO config : allConfigsIdentifiers) {// NOSONAR
 				ConfigurationVO configById = null;
 				try {
 					configById = configService.getById(config.getId());
 				} catch (ApplicationException e) {
+					LOGGER.trace(e);
 					continue;
 				}
 				isValid = isValidToConfig(dataForValidation, configById.getConfigContent());
@@ -152,6 +159,7 @@ public class SortServiceImpl implements SortService {
 			validator.validate(new StreamSource(new StringReader(xmlContent)));
 
 		} catch (SAXException | IOException e) {
+			LOGGER.trace(e);
 			return false;
 		}
 
@@ -201,7 +209,7 @@ public class SortServiceImpl implements SortService {
 	 * @return list with nodes
 	 */
 	private List<Node> convertNodeListToList(final NodeList nodeList) {
-		List<Node> list = new ArrayList<Node>();
+		List<Node> list = new ArrayList<>();
 
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			list.add(nodeList.item(i));
@@ -211,19 +219,7 @@ public class SortServiceImpl implements SortService {
 
 	@Override
 	public boolean validateInputData(final InputDataVO inputData, ResponseVO response) {
-		if (inputData == null || response == null) {
-			LOGGER.error("empty args for validation");
-			return false;
-		}
-
-		if (inputData.getDataForSort() == null || inputData.getDataForSort().trim().isEmpty()) {
-			response.getErrors().add(ERR_MESSAGE_EMPTY_DATA_FOR_SORT);
-			LOGGER.debug("empty data for sort");
-			return false;
-		}
-		if (inputData.getSortOrder() == null || inputData.getSortOrder().isEmpty()) {
-			response.getErrors().add(ERR_MESSAGE_EMPTY_SORT_ORDER);
-			LOGGER.debug("empty sort order");
+		if (checkIsNullOrEmpty(inputData, response)) {
 			return false;
 		}
 
@@ -243,11 +239,37 @@ public class SortServiceImpl implements SortService {
 			}
 		} catch (ApplicationException e) {
 			response.getErrors().add(e.getMessage());
-			LOGGER.debug(e.getMessage());
+			LOGGER.debug(e.getMessage(), e);
 		}
 		LOGGER.debug("data for sort according to sort order validation: " + isValidDataForSortToOrder);
 
 		return isValidDataForSort && isValidDataForSortToOrder;
+	}
+
+	/**
+	 * Checks if parameters null/empty.
+	 * 
+	 * @param inputData
+	 * @param response
+	 * @return true if empty/null some of parameters
+	 */
+	private boolean checkIsNullOrEmpty(InputDataVO inputData, ResponseVO response) {
+		if (inputData == null || response == null) {
+			LOGGER.error("empty args for validation");
+			return true;
+		}
+
+		if (inputData.getDataForSort() == null || inputData.getDataForSort().trim().isEmpty()) {
+			response.getErrors().add(ERR_MESSAGE_EMPTY_DATA_FOR_SORT);
+			LOGGER.debug("empty data for sort");
+			return true;
+		}
+		if (inputData.getSortOrder() == null || inputData.getSortOrder().isEmpty()) {
+			response.getErrors().add(ERR_MESSAGE_EMPTY_SORT_ORDER);
+			LOGGER.debug("empty sort order");
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -264,8 +286,7 @@ public class SortServiceImpl implements SortService {
 		Comparator<Node> comparator = getComparatorForNodes(mapOrderNamesOrdering);
 		Collections.sort(listNodesForSort, comparator);
 
-		String sortedXmlContent = convertListNodesToStringXml(listNodesForSort);
-		return sortedXmlContent;
+		return convertListNodesToStringXml(listNodesForSort);
 	}
 
 	/**
@@ -311,21 +332,22 @@ public class SortServiceImpl implements SortService {
 
 		XPath xPath = XPathFactory.newInstance().newXPath();
 		int counterFieldNamesInDataForSort = 0;
-		try {
-			for (Node node : listNodesForSort) {
-				for (String fieldName : mapOrderNamesOrdering.keySet()) {
-					if (counterFieldNamesInDataForSort > 0) {
-						return true;
-					}
+		for (Node node : listNodesForSort) {
+			for (String fieldName : mapOrderNamesOrdering.keySet()) {
+				if (counterFieldNamesInDataForSort > 0) {
+					return true;
+				}
 
-					Node nodeByFieldName = (Node) xPath.compile(fieldName).evaluate(node, XPathConstants.NODE);
-					if (nodeByFieldName != null) {
-						counterFieldNamesInDataForSort++;
-					}
+				Node nodeByFieldName = null;
+				try {
+					nodeByFieldName = (Node) xPath.compile(fieldName).evaluate(node, XPathConstants.NODE);
+				} catch (XPathExpressionException e) {
+					LOGGER.error("Validation error during parsing, can't parse", e);
+				}
+				if (nodeByFieldName != null) {
+					counterFieldNamesInDataForSort++;
 				}
 			}
-		} catch (XPathExpressionException e) {
-			LOGGER.error("Validation error during parsing, can't parse", e);
 		}
 
 		boolean isValid = counterFieldNamesInDataForSort != 0;
@@ -386,8 +408,7 @@ public class SortServiceImpl implements SortService {
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, omitXmlDeclarationValue);
 		StringWriter writer = new StringWriter();
 		transformer.transform(new DOMSource(document), new StreamResult(writer));
-		String output = writer.getBuffer().toString();
-		return output;
+		return writer.getBuffer().toString();
 	}
 
 	/**

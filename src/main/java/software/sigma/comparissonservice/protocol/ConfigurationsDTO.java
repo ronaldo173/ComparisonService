@@ -17,11 +17,21 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 public class ConfigurationsDTO {
 	private List<ConfigurationDTO> list;
 
+	/**
+	 * Create by list with DTO.
+	 * 
+	 * @param list
+	 *            is list with DTO's.
+	 */
 	public ConfigurationsDTO(List<ConfigurationDTO> list) {
 		this.list = list;
 	}
 
+	/**
+	 * Create list with DTO.
+	 */
 	public ConfigurationsDTO() {
+		super();
 	}
 
 	@XmlAnyElement

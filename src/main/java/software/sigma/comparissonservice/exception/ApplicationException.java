@@ -11,15 +11,35 @@ public class ApplicationException extends Exception {
 
 	private static final long serialVersionUID = 6140332572083713742L;
 
-	public ApplicationException(String message, Throwable cause) {
+	/**
+	 * Create exception object.
+	 * 
+	 * @param message
+	 *            is message with description
+	 * @param cause
+	 *            is cause of exception
+	 */
+	public ApplicationException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 
-	public ApplicationException(Throwable cause) {
+	/**
+	 * Create exception object.
+	 * 
+	 * @param cause
+	 *            is cause of exception
+	 */
+	public ApplicationException(final Throwable cause) {
 		super(cause);
 	}
 
-	public ApplicationException(String message) {
+	/**
+	 * Create exception object.
+	 * 
+	 * @param message
+	 *            is message with description
+	 */
+	public ApplicationException(final String message) {
 		super(message);
 	}
 

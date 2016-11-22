@@ -25,15 +25,34 @@ public class ResponseVO {
 
 	private String informationMessage;
 
+	/**
+	 * Create VO.
+	 */
 	public ResponseVO() {
 		errors = new ArrayList<>();
 	}
 
+	/**
+	 * Create response VO using parameters.
+	 * 
+	 * @param isSuccess
+	 *            is success value
+	 * @param errors
+	 *            is list with errors
+	 */
 	public ResponseVO(boolean isSuccess, List<String> errors) {
 		this.isSuccess = isSuccess;
 		this.errors = errors;
 	}
 
+	/**
+	 * Create response VO using parameters.
+	 * 
+	 * @param isSuccess
+	 *            is success value
+	 * @param error
+	 *            is error
+	 */
 	public ResponseVO(boolean isSuccess, String error) {
 		this.isSuccess = isSuccess;
 		this.errors = Arrays.asList(error);

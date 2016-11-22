@@ -12,10 +12,16 @@ import software.sigma.comparissonservice.exception.ApplicationException;
 import software.sigma.comparissonservice.protocol.ResponseDTO;
 import software.sigma.comparissonservice.vo.ResponseVO;
 
+/**
+ * Handle exception and put to response with descriptions.
+ * 
+ * @author alexandr.efimov
+ *
+ */
 @ControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
-	private static final Logger LOGGER = Logger.getLogger(CustomRestExceptionHandler.class);
+	private static final Logger LOG = Logger.getLogger(CustomRestExceptionHandler.class);
 
 	/**
 	 * Response if not correct format of id in request to service.
@@ -28,22 +34,35 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseDTO handleMethodArgumentTypeMismatch(final MethodArgumentTypeMismatchException exception) {
 		String errorMessage = exception.getName() + " should be of type " + exception.getRequiredType().getName();
 
-		LOGGER.debug(exception.getMessage());
+		LOG.debug(exception.getMessage());
 		return new ResponseDTO(false, errorMessage);
 	}
 
+	/**
+	 * Handle application exceptions.
+	 * 
+	 * @param exception
+	 *            is exception
+	 * @return response with description
+	 */
 	@ExceptionHandler(ApplicationException.class)
 	@ResponseBody
 	public ResponseDTO handlePersistException(final ApplicationException exception) {
-		LOGGER.debug(exception.getMessage());
+		LOG.debug(exception.getMessage());
 		return new ResponseDTO(false, exception.getMessage());
 
 	}
 
+	/**
+	 * Handle storage exceptions.
+	 * 
+	 * @param exception
+	 * @return
+	 */
 	@ExceptionHandler(DuplicateKeyException.class)
 	@ResponseBody
 	public ResponseDTO handlePersistDaoExceptionDublicateKey(final DuplicateKeyException exception) {
-		LOGGER.debug(exception.getMessage());
+		LOG.debug(exception.getMessage());
 		String message = exception.getMostSpecificCause().getMessage();
 		return new ResponseDTO(false, message);
 

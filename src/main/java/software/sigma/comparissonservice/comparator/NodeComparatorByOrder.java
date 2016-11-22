@@ -11,6 +11,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Node;
 
 /**
@@ -37,7 +38,15 @@ public class NodeComparatorByOrder implements Comparator<Node>, Serializable {
 	 */
 	private Map<String, String> mapOrderNamesOrdering;
 
-	public NodeComparatorByOrder(LinkedHashMap<String, String> mapOrderNamesOrdering) {
+	private static final Logger LOG = Logger.getLogger(NodeComparatorByOrder.class);
+
+	/**
+	 * Create comparator by sort order. Description - in class documentation.
+	 * 
+	 * @param mapOrderNamesOrdering
+	 *            is sort order
+	 */
+	public NodeComparatorByOrder(Map<String, String> mapOrderNamesOrdering) {
 		this.mapOrderNamesOrdering = mapOrderNamesOrdering;
 	}
 
@@ -58,11 +67,8 @@ public class NodeComparatorByOrder implements Comparator<Node>, Serializable {
 					String node1Value = node1ForComparing.getFirstChild().getNodeValue();
 					String node2Value = node2ForCOmparing.getFirstChild().getNodeValue();
 
-					if (orderElementOrderings != null && orderElementOrderings.equalsIgnoreCase(SORT_TYPE_ASCENDING)) {
-						compareResult = compareValuesDependsOnType(node1Value, node2Value);
-					} else {
-						compareResult = compareValuesDependsOnType(node2Value, node1Value);
-					}
+					compareResult = compare(node1Value, node2Value, orderElementOrderings);
+
 				}
 
 				if (compareResult != 0) {
@@ -70,10 +76,20 @@ public class NodeComparatorByOrder implements Comparator<Node>, Serializable {
 				}
 			}
 		} catch (XPathExpressionException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 
 		return compareResult;
+	}
+
+	private int compare(String firstForCompare, String secondForCompare, String orderType) {
+		int result;
+		if (orderType != null && orderType.equalsIgnoreCase(SORT_TYPE_ASCENDING)) {
+			result = compareValuesDependsOnType(firstForCompare, secondForCompare);
+		} else {
+			result = compareValuesDependsOnType(secondForCompare, firstForCompare);
+		}
+		return result;
 	}
 
 	/**
@@ -99,12 +115,7 @@ public class NodeComparatorByOrder implements Comparator<Node>, Serializable {
 	 * @return true if number
 	 */
 	private boolean isNumeric(final String strForCheck) {
-		try {
-			Double.parseDouble(strForCheck);
-		} catch (NumberFormatException nfe) {
-			return false;
-		}
-		return true;
+		return strForCheck.matches("[-+]?\\d*\\.?\\d+");
 	}
 
 }

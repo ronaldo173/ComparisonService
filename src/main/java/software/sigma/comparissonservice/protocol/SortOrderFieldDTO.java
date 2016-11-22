@@ -7,6 +7,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 import org.hibernate.validator.constraints.NotEmpty;
 
+/**
+ * DTO for sort order field.
+ * 
+ * @author alexandr.efimov
+ *
+ */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SortOrderFieldDTO {

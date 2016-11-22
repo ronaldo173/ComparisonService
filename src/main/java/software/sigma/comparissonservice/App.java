@@ -11,8 +11,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class App {
-	public static void main(String[] args) {
-		SpringApplication.run(App.class, args);
+
+	/**
+	 * For context setup. Use static methods.
+	 */
+	public App() {// NOSONAR
+	}
+
+	/**
+	 * Enter point for run Spring Boot application.
+	 * 
+	 * @param args
+	 *            expect nothing
+	 */
+	public static void main(final String[] args) {
+		SpringApplication.run(App.class, args);// NOSONAR
 	}
 
 }

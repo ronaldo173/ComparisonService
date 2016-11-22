@@ -9,6 +9,12 @@ import org.eclipse.persistence.oxm.annotations.XmlCDATA;
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 import org.hibernate.validator.constraints.NotEmpty;
 
+/**
+ * DTO for input.
+ * 
+ * @author alexandr.efimov
+ *
+ */
 @XmlRootElement(name = "input")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InputDataDTO {

@@ -8,6 +8,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * DTO for sort order fields.
+ * 
+ * @author alexandr.efimov
+ *
+ */
 @XmlRootElement(name = "sortOrder")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SortOrderFieldsDTO {

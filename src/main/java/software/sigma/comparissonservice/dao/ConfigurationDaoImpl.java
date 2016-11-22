@@ -70,10 +70,8 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 	@Override
 	public List<Configuration> getAll() {
 
-		List<Configuration> configurations = jdbcTemplate.query(SQL_ALL_CONFIGS,
-				new BeanPropertyRowMapper<Configuration>(Configuration.class));
+		return jdbcTemplate.query(SQL_ALL_CONFIGS, new BeanPropertyRowMapper<Configuration>(Configuration.class));
 
-		return configurations;
 	}
 
 	@Override
@@ -115,7 +113,7 @@ public class ConfigurationDaoImpl implements ConfigurationDao {
 
 		int updateInfoAmountRows = jdbcTemplate.update(SQL_INSERT_CONFIG_INFO,
 				new Object[] { configuration.getName(), keyHolder.getKey() });
-		return (updateContentAmountRows == 1 && updateInfoAmountRows == 1);
+		return updateContentAmountRows == 1 && updateInfoAmountRows == 1;
 	}
 
 	@Override
